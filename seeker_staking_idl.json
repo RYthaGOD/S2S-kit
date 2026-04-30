@@ -1,0 +1,2134 @@
+{
+  "accounts": [
+    {
+      "discriminator": [
+        133,
+        238,
+        255,
+        214,
+        215,
+        11,
+        189,
+        23
+      ],
+      "name": "GuardianDelegationPool"
+    },
+    {
+      "discriminator": [
+        238,
+        151,
+        43,
+        3,
+        11,
+        151,
+        63,
+        176
+      ],
+      "name": "StakeConfig"
+    },
+    {
+      "discriminator": [
+        102,
+        53,
+        163,
+        107,
+        9,
+        138,
+        87,
+        153
+      ],
+      "name": "UserStake"
+    }
+  ],
+  "address": "SKRskrmtL83pcL4YqLWt6iPefDqwXQWHSw9S9vz94BZ",
+  "errors": [
+    {
+      "code": 6000,
+      "msg": "Invalid commission rate: must be between 0 and 10,000 basis points",
+      "name": "InvalidCommissionRate"
+    },
+    {
+      "code": 6001,
+      "msg": "Invalid cooldown period: must be greater than zero",
+      "name": "InvalidCooldownPeriod"
+    },
+    {
+      "code": 6002,
+      "msg": "Insufficient stake amount: below minimum required",
+      "name": "InsufficientStakeAmount"
+    },
+    {
+      "code": 6003,
+      "msg": "Guardian pool is not active",
+      "name": "GuardianPoolInactive"
+    },
+    {
+      "code": 6004,
+      "msg": "Cooldown period not completed",
+      "name": "CooldownNotCompleted"
+    },
+    {
+      "code": 6005,
+      "msg": "Invalid share price: cannot be zero",
+      "name": "InvalidSharePrice"
+    },
+    {
+      "code": 6006,
+      "msg": "Insufficient shares: not enough shares to unstake",
+      "name": "InsufficientShares"
+    },
+    {
+      "code": 6007,
+      "msg": "Unauthorized: only authority can perform this action",
+      "name": "Unauthorized"
+    },
+    {
+      "code": 6008,
+      "msg": "Invalid vault: incorrect vault account",
+      "name": "InvalidVault"
+    },
+    {
+      "code": 6009,
+      "msg": "Math overflow: calculation resulted in overflow",
+      "name": "MathOverflow"
+    },
+    {
+      "code": 6010,
+      "msg": "Invalid mint: incorrect mint account",
+      "name": "InvalidMint"
+    },
+    {
+      "code": 6011,
+      "msg": "Stake account not found",
+      "name": "StakeAccountNotFound"
+    },
+    {
+      "code": 6012,
+      "msg": "Guardian pool not found",
+      "name": "GuardianPoolNotFound"
+    },
+    {
+      "code": 6013,
+      "msg": "Invalid nonce: nonce mismatch",
+      "name": "InvalidNonce"
+    },
+    {
+      "code": 6014,
+      "msg": "Guardian pool already exists",
+      "name": "GuardianPoolAlreadyExists"
+    },
+    {
+      "code": 6015,
+      "msg": "Guardian pool is already inactive",
+      "name": "GuardianPoolAlreadyInactive"
+    },
+    {
+      "code": 6016,
+      "msg": "Invalid guardian: incorrect guardian account",
+      "name": "InvalidGuardian"
+    },
+    {
+      "code": 6017,
+      "msg": "Withdraw required: cooldown completed, must withdraw unstaked shares before unstaking more",
+      "name": "WithdrawRequired"
+    },
+    {
+      "code": 6018,
+      "msg": "Stake not unstaked: stake has not been unstaked yet",
+      "name": "NotUnstaked"
+    },
+    {
+      "code": 6019,
+      "msg": "Nothing to withdraw: no unstaking amount available",
+      "name": "NothingToWithdraw"
+    },
+    {
+      "code": 6020,
+      "msg": "Invalid token account: must be an Associated Token Account",
+      "name": "InvalidTokenAccount"
+    }
+  ],
+  "events": [
+    {
+      "discriminator": [
+        20,
+        138,
+        78,
+        54,
+        244,
+        208,
+        239,
+        253
+      ],
+      "name": "CommissionBpsUpdated"
+    },
+    {
+      "discriminator": [
+        35,
+        208,
+        55,
+        106,
+        221,
+        152,
+        200,
+        26
+      ],
+      "name": "GuardianAuthorityUpdated"
+    },
+    {
+      "discriminator": [
+        113,
+        185,
+        128,
+        5,
+        32,
+        11,
+        110,
+        128
+      ],
+      "name": "GuardianCommissionClaimed"
+    },
+    {
+      "discriminator": [
+        165,
+        65,
+        219,
+        181,
+        219,
+        29,
+        140,
+        2
+      ],
+      "name": "GuardianDeregistered"
+    },
+    {
+      "discriminator": [
+        255,
+        23,
+        109,
+        119,
+        11,
+        122,
+        209,
+        103
+      ],
+      "name": "GuardianRegistered"
+    },
+    {
+      "discriminator": [
+        35,
+        73,
+        90,
+        244,
+        147,
+        193,
+        193,
+        73
+      ],
+      "name": "NewStakeConfigAuthority"
+    },
+    {
+      "discriminator": [
+        48,
+        76,
+        161,
+        218,
+        120,
+        162,
+        115,
+        143
+      ],
+      "name": "StakeConfigInitialized"
+    },
+    {
+      "discriminator": [
+        177,
+        63,
+        174,
+        84,
+        146,
+        48,
+        110,
+        182
+      ],
+      "name": "StakeConfigUpdated"
+    },
+    {
+      "discriminator": [
+        11,
+        146,
+        45,
+        205,
+        230,
+        58,
+        213,
+        240
+      ],
+      "name": "Staked"
+    },
+    {
+      "discriminator": [
+        102,
+        223,
+        189,
+        101,
+        201,
+        223,
+        180,
+        38
+      ],
+      "name": "UnstakeCancelled"
+    },
+    {
+      "discriminator": [
+        27,
+        179,
+        156,
+        215,
+        47,
+        71,
+        195,
+        7
+      ],
+      "name": "Unstaked"
+    },
+    {
+      "discriminator": [
+        20,
+        89,
+        223,
+        198,
+        194,
+        124,
+        219,
+        13
+      ],
+      "name": "Withdrawn"
+    }
+  ],
+  "instructions": [
+    {
+      "accounts": [
+        {
+          "name": "user_stake",
+          "writable": true
+        },
+        {
+          "name": "stake_config",
+          "relations": [
+            "user_stake"
+          ],
+          "writable": true
+        },
+        {
+          "name": "guardian_pool",
+          "relations": [
+            "user_stake"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user",
+          "relations": [
+            "user_stake"
+          ],
+          "signer": true
+        },
+        {
+          "name": "stake_vault"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [],
+      "discriminator": [
+        64,
+        65,
+        53,
+        227,
+        125,
+        153,
+        3,
+        167
+      ],
+      "docs": [
+        "Cancels a pending unstake during the cooldown period, restoring the shares",
+        "and clearing the unstaking state. This allows users to change their mind",
+        "before the cooldown completes."
+      ],
+      "name": "cancel_unstake"
+    },
+    {
+      "accounts": [
+        {
+          "name": "guardian_pool",
+          "writable": true
+        },
+        {
+          "name": "stake_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          },
+          "relations": [
+            "guardian_pool"
+          ],
+          "writable": true
+        },
+        {
+          "docs": [
+            "The guardian authority (can be guardian or authorized delegate)"
+          ],
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "stake_vault",
+          "writable": true
+        },
+        {
+          "docs": [
+            "Destination token account where commission will be transferred"
+          ],
+          "name": "destination",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+          "name": "token_program"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [],
+      "discriminator": [
+        227,
+        163,
+        154,
+        139,
+        29,
+        195,
+        57,
+        85
+      ],
+      "docs": [
+        "Allows guardians to claim their accrued commission rewards.",
+        "This checkpoints commission based on share price increases and transfers",
+        "the accrued commission to a destination of the guardian's choice.",
+        "Commission is checkpointed independently of users unstaking, allowing",
+        "guardians to claim rewards as they accrue."
+      ],
+      "name": "claim_guardian_commission"
+    },
+    {
+      "accounts": [
+        {
+          "name": "guardian_pool",
+          "writable": true
+        },
+        {
+          "name": "stake_config",
+          "relations": [
+            "guardian_pool"
+          ],
+          "writable": true
+        },
+        {
+          "docs": [
+            "The stake config authority"
+          ],
+          "name": "authority",
+          "relations": [
+            "stake_config"
+          ],
+          "signer": true
+        },
+        {
+          "name": "stake_vault"
+        },
+        {
+          "address": "11111111111111111111111111111111",
+          "name": "system_program"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [],
+      "discriminator": [
+        93,
+        7,
+        130,
+        178,
+        136,
+        195,
+        142,
+        193
+      ],
+      "docs": [
+        "Deregisters a guardian, deactivating their pool and preventing new delegations.",
+        "Existing stakes remain active but the guardian pool becomes inactive."
+      ],
+      "name": "deregister_guardian"
+    },
+    {
+      "accounts": [
+        {
+          "name": "stake_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          },
+          "writable": true
+        },
+        {
+          "name": "payer",
+          "signer": true,
+          "writable": true
+        },
+        {
+          "name": "authority"
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "stake_vault",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          },
+          "writable": true
+        },
+        {
+          "address": "11111111111111111111111111111111",
+          "name": "system_program"
+        },
+        {
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+          "name": "token_program"
+        },
+        {
+          "address": "SysvarRent111111111111111111111111111111111",
+          "name": "rent"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "InitializeStakeConfigArgs"
+            }
+          }
+        }
+      ],
+      "discriminator": [
+        196,
+        35,
+        131,
+        174,
+        172,
+        40,
+        233,
+        19
+      ],
+      "docs": [
+        "Initializes the staking configuration with the stake vault, minimum stake amount,",
+        "and cooldown period. This must be called before any other operations."
+      ],
+      "name": "initialize_stake_config"
+    },
+    {
+      "accounts": [
+        {
+          "name": "guardian_pool",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  117,
+                  97,
+                  114,
+                  100,
+                  105,
+                  97,
+                  110,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stake_config"
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              }
+            ]
+          },
+          "writable": true
+        },
+        {
+          "name": "stake_config"
+        },
+        {
+          "name": "guardian"
+        },
+        {
+          "name": "guardian_authority"
+        },
+        {
+          "name": "payer",
+          "signer": true,
+          "writable": true
+        },
+        {
+          "docs": [
+            "The stake config authority"
+          ],
+          "name": "authority",
+          "relations": [
+            "stake_config"
+          ],
+          "signer": true
+        },
+        {
+          "address": "11111111111111111111111111111111",
+          "name": "system_program"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "RegisterGuardianArgs"
+            }
+          }
+        }
+      ],
+      "discriminator": [
+        21,
+        206,
+        243,
+        116,
+        97,
+        100,
+        230,
+        59
+      ],
+      "docs": [
+        "Registers a new guardian with the specified commission rate (in basis points).",
+        "The guardian can then accept staking delegations and earn commission on rewards."
+      ],
+      "name": "register_guardian"
+    },
+    {
+      "accounts": [
+        {
+          "name": "user_stake",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  107,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stake_config"
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "account",
+                "path": "guardian_pool"
+              }
+            ]
+          },
+          "writable": true
+        },
+        {
+          "name": "stake_config",
+          "writable": true
+        },
+        {
+          "name": "guardian_pool",
+          "writable": true
+        },
+        {
+          "name": "payer",
+          "signer": true,
+          "writable": true
+        },
+        {
+          "name": "user"
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "name": "stake_vault",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+          "name": "token_program"
+        },
+        {
+          "address": "11111111111111111111111111111111",
+          "name": "system_program"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "StakeArgs"
+            }
+          }
+        }
+      ],
+      "discriminator": [
+        206,
+        176,
+        202,
+        18,
+        200,
+        209,
+        179,
+        108
+      ],
+      "docs": [
+        "Stakes tokens with a guardian. Tokens are transferred to the stake vault and",
+        "shares are minted based on the current share price. Updates share price and",
+        "accrues guardian commission before processing the stake."
+      ],
+      "name": "stake"
+    },
+    {
+      "accounts": [
+        {
+          "name": "user_stake",
+          "writable": true
+        },
+        {
+          "name": "stake_config",
+          "relations": [
+            "user_stake"
+          ],
+          "writable": true
+        },
+        {
+          "name": "guardian_pool",
+          "relations": [
+            "user_stake"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user",
+          "relations": [
+            "user_stake"
+          ],
+          "signer": true
+        },
+        {
+          "name": "stake_vault"
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "UnstakeArgs"
+            }
+          }
+        }
+      ],
+      "discriminator": [
+        90,
+        95,
+        107,
+        42,
+        205,
+        124,
+        50,
+        225
+      ],
+      "docs": [
+        "Initiates an unstake by burning shares and marking tokens for withdrawal after",
+        "the cooldown period. The unstaking amount is calculated and saved at the time",
+        "of unstake to prevent benefiting from share price increases during cooldown."
+      ],
+      "name": "unstake"
+    },
+    {
+      "accounts": [
+        {
+          "name": "guardian_pool",
+          "writable": true
+        },
+        {
+          "name": "stake_config",
+          "relations": [
+            "guardian_pool"
+          ],
+          "writable": true
+        },
+        {
+          "docs": [
+            "The authority updating the commission rate"
+          ],
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "stake_vault"
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "UpdateCommissionBpsArgs"
+            }
+          }
+        }
+      ],
+      "discriminator": [
+        31,
+        213,
+        221,
+        71,
+        35,
+        97,
+        53,
+        160
+      ],
+      "docs": [
+        "Updates the commission rate (in basis points) for a guardian pool.",
+        "Updates share price and accrues commission before changing the rate.",
+        "Only the current guardian authority can update the commission rate."
+      ],
+      "name": "update_commission_bps"
+    },
+    {
+      "accounts": [
+        {
+          "name": "guardian_pool",
+          "writable": true
+        },
+        {
+          "name": "stake_config",
+          "relations": [
+            "guardian_pool"
+          ]
+        },
+        {
+          "docs": [
+            "The current authority updating to a new authority"
+          ],
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "UpdateGuardianAuthorityArgs"
+            }
+          }
+        }
+      ],
+      "discriminator": [
+        198,
+        241,
+        125,
+        25,
+        80,
+        170,
+        17,
+        3
+      ],
+      "docs": [
+        "Updates the guardian authority for a guardian pool. This allows transferring",
+        "operational control to a new keypair while keeping the same guardian pool.",
+        "The guardian field (PDA seed) remains unchanged."
+      ],
+      "name": "update_guardian_authority"
+    },
+    {
+      "accounts": [
+        {
+          "name": "stake_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          },
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "relations": [
+            "stake_config"
+          ],
+          "signer": true
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "UpdateStakeConfigArgs"
+            }
+          }
+        }
+      ],
+      "discriminator": [
+        180,
+        108,
+        51,
+        29,
+        45,
+        168,
+        128,
+        134
+      ],
+      "docs": [
+        "Update the StakeConfig with new authority, cooldown period, or minimum stake amount.",
+        "Permissioned by StakeConfig authority."
+      ],
+      "name": "update_stake_config"
+    },
+    {
+      "accounts": [
+        {
+          "name": "user_stake",
+          "writable": true
+        },
+        {
+          "name": "stake_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          },
+          "relations": [
+            "user_stake"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user",
+          "relations": [
+            "user_stake"
+          ],
+          "writable": true
+        },
+        {
+          "name": "stake_vault",
+          "writable": true
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+          "name": "token_program"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [],
+      "discriminator": [
+        183,
+        18,
+        70,
+        156,
+        148,
+        109,
+        161,
+        34
+      ],
+      "docs": [
+        "Withdraws tokens after the cooldown period has elapsed following an unstake.",
+        "Transfers tokens from the stake vault to the user's token account."
+      ],
+      "name": "withdraw"
+    }
+  ],
+  "metadata": {
+    "description": "Created with Anchor",
+    "name": "staking",
+    "spec": "0.1.0",
+    "version": "0.1.0"
+  },
+  "types": [
+    {
+      "name": "CommissionBpsUpdated",
+      "type": {
+        "fields": [
+          {
+            "name": "guardian_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "old_commission_bps",
+            "type": "u16"
+          },
+          {
+            "name": "new_commission_bps",
+            "type": "u16"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "GuardianAuthorityUpdated",
+      "type": {
+        "fields": [
+          {
+            "name": "guardian_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "old_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "new_authority",
+            "type": "pubkey"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "GuardianCommissionClaimed",
+      "type": {
+        "fields": [
+          {
+            "name": "guardian_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "cumulative_commission_per_share",
+            "type": "u128"
+          },
+          {
+            "name": "claimed_amount",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "GuardianDelegationPool",
+      "type": {
+        "fields": [
+          {
+            "docs": [
+              "Reference to the stake config"
+            ],
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "docs": [
+              "Guardian public key (used as PDA seed, immutable)"
+            ],
+            "name": "guardian",
+            "type": "pubkey"
+          },
+          {
+            "docs": [
+              "Authority that can update guardian settings (can be changed)"
+            ],
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "docs": [
+              "Total shares delegated to this guardian"
+            ],
+            "name": "total_shares",
+            "type": "u128"
+          },
+          {
+            "docs": [
+              "Per-guardian cumulative commission per share, tracked based on this guardian's commission rate.",
+              "This is updated when rewards arrive, ensuring commission is calculated based on rate at time rewards were earned."
+            ],
+            "name": "cumulative_commission_per_share",
+            "type": "u128"
+          },
+          {
+            "docs": [
+              "Last share price when this guardian's commission was last updated.",
+              "Used to calculate share price increases for commission tracking."
+            ],
+            "name": "last_share_price",
+            "type": "u128"
+          },
+          {
+            "docs": [
+              "Commission tokens accrued by this guardian."
+            ],
+            "name": "accrued_commission",
+            "type": "u128"
+          },
+          {
+            "docs": [
+              "Commission rate in basis points (0-10,000)"
+            ],
+            "name": "commission_bps",
+            "type": "u16"
+          },
+          {
+            "docs": [
+              "PDA bump"
+            ],
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "docs": [
+              "Whether this guardian pool is active"
+            ],
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "docs": [
+              "Share price at the time of deregistration (if inactive)",
+              "Used to calculate unstake amounts for inactive guardians",
+              "Set to 0 when active, and to the share price when inactive"
+            ],
+            "name": "deregistered_share_price",
+            "type": "u128"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "GuardianDeregistered",
+      "type": {
+        "fields": [
+          {
+            "name": "guardian_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "guardian",
+            "type": "pubkey"
+          },
+          {
+            "name": "deregistered_by",
+            "type": "pubkey"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "GuardianRegistered",
+      "type": {
+        "fields": [
+          {
+            "name": "guardian_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "guardian",
+            "type": "pubkey"
+          },
+          {
+            "name": "commission_bps",
+            "type": "u16"
+          },
+          {
+            "name": "registered_by",
+            "type": "pubkey"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "InitializeStakeConfigArgs",
+      "type": {
+        "fields": [
+          {
+            "name": "min_stake_amount",
+            "type": "u64"
+          },
+          {
+            "name": "cooldown_seconds",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "NewStakeConfigAuthority",
+      "type": {
+        "fields": [
+          {
+            "name": "old_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "new_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "RegisterGuardianArgs",
+      "type": {
+        "fields": [
+          {
+            "name": "commission_bps",
+            "type": "u16"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "StakeArgs",
+      "type": {
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "StakeConfig",
+      "type": {
+        "fields": [
+          {
+            "docs": [
+              "PDA bump"
+            ],
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "docs": [
+              "Authority that can update configuration"
+            ],
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "docs": [
+              "SKR token mint"
+            ],
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "docs": [
+              "Vault holding user principal deposits"
+            ],
+            "name": "stake_vault",
+            "type": "pubkey"
+          },
+          {
+            "docs": [
+              "Minimum stake amount"
+            ],
+            "name": "min_stake_amount",
+            "type": "u64"
+          },
+          {
+            "docs": [
+              "Cooldown period in seconds before unstaking"
+            ],
+            "name": "cooldown_seconds",
+            "type": "u64"
+          },
+          {
+            "docs": [
+              "Total shares outstanding"
+            ],
+            "name": "total_shares",
+            "type": "u128"
+          },
+          {
+            "docs": [
+              "Global share price (scaled, e.g., 1e9)"
+            ],
+            "name": "share_price",
+            "type": "u128"
+          },
+          {
+            "docs": [
+              "Sum of guardian_shares × guardian_bps across all guardians.",
+              "This can be thought of the total number of shares used for",
+              "accruing Guardian rewards."
+            ],
+            "name": "commission_weight_sum",
+            "type": "u128"
+          },
+          {
+            "docs": [
+              "cumulative tracking of the amount of rewards per share Guardians",
+              "should receive."
+            ],
+            "name": "cumulative_commission_per_share",
+            "type": "u128"
+          },
+          {
+            "docs": [
+              "Last recorded vault amount for tracking rewards"
+            ],
+            "name": "last_vault_amount",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "StakeConfigInitialized",
+      "type": {
+        "fields": [
+          {
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "min_stake_amount",
+            "type": "u64"
+          },
+          {
+            "name": "cooldown_seconds",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "StakeConfigUpdated",
+      "type": {
+        "fields": [
+          {
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "min_stake_amount",
+            "type": "u64"
+          },
+          {
+            "name": "cooldown_seconds",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "Staked",
+      "type": {
+        "fields": [
+          {
+            "name": "user_stake",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "guardian_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "guardian",
+            "type": "pubkey"
+          },
+          {
+            "name": "deposited_amount",
+            "type": "u64"
+          },
+          {
+            "name": "shares_minted",
+            "type": "u128"
+          },
+          {
+            "name": "share_price",
+            "type": "u128"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "UnstakeArgs",
+      "type": {
+        "fields": [
+          {
+            "docs": [
+              "Number of shares to unstake"
+            ],
+            "name": "shares",
+            "type": "u128"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "UnstakeCancelled",
+      "type": {
+        "fields": [
+          {
+            "name": "user_stake",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "guardian_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "guardian",
+            "type": "pubkey"
+          },
+          {
+            "name": "shares_restored",
+            "type": "u128"
+          },
+          {
+            "name": "share_price",
+            "type": "u128"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "Unstaked",
+      "type": {
+        "fields": [
+          {
+            "name": "user_stake",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "guardian_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "guardian",
+            "type": "pubkey"
+          },
+          {
+            "name": "shares_unstaked",
+            "type": "u128"
+          },
+          {
+            "name": "share_price",
+            "type": "u128"
+          },
+          {
+            "name": "unstake_timestamp",
+            "type": "i64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "UpdateCommissionBpsArgs",
+      "type": {
+        "fields": [
+          {
+            "name": "new_commission_bps",
+            "type": "u16"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "UpdateGuardianAuthorityArgs",
+      "type": {
+        "fields": [
+          {
+            "name": "new_authority",
+            "type": "pubkey"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "UpdateStakeConfigArgs",
+      "type": {
+        "fields": [
+          {
+            "name": "min_stake_amount",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "cooldown_seconds",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "authority",
+            "type": {
+              "option": "pubkey"
+            }
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "UserStake",
+      "type": {
+        "fields": [
+          {
+            "docs": [
+              "PDA bump"
+            ],
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "docs": [
+              "Reference to the stake config"
+            ],
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "docs": [
+              "User's public key"
+            ],
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "docs": [
+              "Guardian pool this stake is delegated to"
+            ],
+            "name": "guardian_pool",
+            "type": "pubkey"
+          },
+          {
+            "docs": [
+              "Total shares owned by this user"
+            ],
+            "name": "shares",
+            "type": "u128"
+          },
+          {
+            "docs": [
+              "Average cost basis (share price) at which user staked",
+              "This is a weighted average: cost_basis = (old_cost_basis * old_shares + new_share_price * new_shares) / total_shares"
+            ],
+            "name": "cost_basis",
+            "type": "u128"
+          },
+          {
+            "docs": [
+              "Amount of commission earned by the Guardian given the amount of shares staked.",
+              "Used as a reference point to calculate the amount of commission earned by the Guardian",
+              "while the user's stake is active."
+            ],
+            "name": "cumulative_commission_before_staking",
+            "type": "u128"
+          },
+          {
+            "docs": [
+              "Token amount that is currently unstaking (calculated at unstake time using share price)"
+            ],
+            "name": "unstaking_amount",
+            "type": "u64"
+          },
+          {
+            "docs": [
+              "Unix timestamp when unstake was initiated (for cooldown calculation)"
+            ],
+            "name": "unstake_timestamp",
+            "type": "i64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "Withdrawn",
+      "type": {
+        "fields": [
+          {
+            "name": "user_stake",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "unstaking_amount",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    }
+  ]
+}

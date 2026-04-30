@@ -1,0 +1,80 @@
+/* Industrial Futurism / Precision Minimalist Theme */
+
+.s2s-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 32px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    background: #000;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.s2s-btn-primary:hover {
+    background: #fff;
+    color: #000;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.s2s-btn-active {
+    background: #111;
+    border-color: #00FF66;
+    color: #00FF66;
+}
+
+.s2s-btn-active:hover {
+    background: #00FF66;
+    color: #000;
+}
+
+.s2s-pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: currentColor;
+    border-radius: 50%;
+    animation: s2s-pulse 2s infinite;
+}
+
+.s2s-btn-cooldown {
+    background: #111;
+    border-color: #FF3366;
+    color: #FF3366;
+    cursor: not-allowed;
+}
+
+.s2s-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+@keyframes s2s-pulse {
+    0% { transform: scale(0.95); opacity: 0.5; box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.7); }
+    70% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 6px rgba(0, 255, 102, 0); }
+    100% { transform: scale(0.95); opacity: 0.5; box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); }
+}
+
+.s2s-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.1);
+    border-left-color: #fff;
+    border-radius: 50%;
+    animation: s2s-spin 1s linear infinite;
+}
+
+@keyframes s2s-spin {
+    100% { transform: rotate(360deg); }
+}

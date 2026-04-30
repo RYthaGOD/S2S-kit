@@ -1,0 +1,36 @@
+{
+  "name": "@rykiri/stake-to-subscribe",
+  "version": "1.0.0",
+  "description": "Frictionless, zero-acquisition-cost subscription components for Solana Mobile.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./theme.css": "./dist/theme.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --watch"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "framer-motion": ">=10"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.0"
+  },
+  "author": "Rykiri",
+  "license": "MIT"
+}
