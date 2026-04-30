@@ -93,26 +93,34 @@ pub fn stake_and_subscribe(ctx: Context<StakeAndSubscribe>, amount: u64) -> Resu
 
     // 3. Delegate to the Official $SKR Staking Program via CPI
     msg!("Executing CPI to official $SKR Staking Protocol...");
-    let delegate_ix = solana_program::instruction::Instruction {
-        program_id: ctx.accounts.skr_staking_program.key(),
-        accounts: vec![
-            solana_program::instruction::AccountMeta::new(ctx.accounts.vault_skr_account.key(), false),
-            solana_program::instruction::AccountMeta::new(ctx.accounts.skr_staking_vault.key(), false),
-            solana_program::instruction::AccountMeta::new_readonly(ctx.accounts.user_vault.key(), true), // Vault PDA is authority
-            // Add other accounts required by the official IDL
-        ],
-        // Placeholder discriminator for 'delegate' - update with official IDL bytes
-        data: vec![0; 8], 
-    };
+    
+    // We use the UserVault PDA as the 'user' (authority) in the staking program
+    let stake_ix = crate::seeker_cpi::delegate_stake_ix(
+        ctx.accounts.user_vault.key(), // user_stake (using vault key as placeholder)
+        ctx.accounts.skr_staking_vault.key(), // stake_config
+        ctx.accounts.skr_staking_vault.key(), // guardian_pool
+        ctx.accounts.user.key(), // payer
+        ctx.accounts.user_vault.key(), // user (authority)
+        ctx.accounts.vault_skr_account.key(), // user_token_account
+        ctx.accounts.skr_staking_vault.key(), // stake_vault
+        ctx.accounts.skr_mint.key(),
+        ctx.accounts.token_program.key(),
+        ctx.accounts.system_program.key(),
+        ctx.accounts.skr_staking_program.key(), // event_authority placeholder
+        amount,
+    );
 
     anchor_lang::solana_program::program::invoke_signed(
-        &delegate_ix,
+        &stake_ix,
         &[
-            ctx.accounts.vault_skr_account.to_account_info(),
-            ctx.accounts.skr_staking_vault.to_account_info(),
             ctx.accounts.user_vault.to_account_info(),
+            ctx.accounts.skr_staking_vault.to_account_info(),
+            ctx.accounts.user.to_account_info(),
+            ctx.accounts.vault_skr_account.to_account_info(),
+            ctx.accounts.skr_mint.to_account_info(),
             ctx.accounts.skr_staking_program.to_account_info(),
             ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.system_program.to_account_info(),
         ],
         signer_seeds
     )?;

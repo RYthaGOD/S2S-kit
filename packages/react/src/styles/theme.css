@@ -75,6 +75,19 @@
     animation: s2s-spin 1s linear infinite;
 }
 
+.s2s-btn-withdraw {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+.s2s-btn-withdraw:hover {
+    background: #00FF66;
+    border-color: #00FF66;
+    box-shadow: 0 0 40px rgba(0, 255, 102, 0.4);
+}
+
 @keyframes s2s-spin {
     100% { transform: rotate(360deg); }
 }

@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::pubkey;
-use anchor_spl::token_interface::{burn, Burn, Mint, TokenAccount, TokenInterface};
+use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
 
 pub const SKR_STAKING_PROGRAM: Pubkey = pubkey!("SKRskrmtL83pcL4YqLWt6iPefDqwXQWHSw9S9vz94BZ");
 pub const SKR_STAKING_VAULT: Pubkey = pubkey!("8isViKbwhuhFhsv2t8vaFL74pKCqaFPQXo1KkeQwZbB8");
@@ -9,7 +9,7 @@ pub const SKR_STAKING_AUTHORITY: Pubkey = pubkey!("4HQy82s9CHTv1GsYKnANHMiHfhcqe
 use crate::state::{DappRegistry, UserVault};
 
 #[derive(Accounts)]
-pub struct UnstakeAndWithdraw<'info> {
+pub struct InitiateUnsubscribe<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
@@ -22,12 +22,6 @@ pub struct UnstakeAndWithdraw<'info> {
         bump = user_vault.bump
     )]
     pub user_vault: Account<'info, UserVault>,
-
-    #[account(mut)]
-    pub pass_mint: InterfaceAccount<'info, Mint>,
-
-    #[account(mut)]
-    pub user_pass_account: InterfaceAccount<'info, TokenAccount>,
 
     pub token_program: Interface<'info, TokenInterface>,
     
@@ -43,19 +37,22 @@ pub struct UnstakeAndWithdraw<'info> {
     #[account(address = SKR_STAKING_AUTHORITY)]
     pub skr_staking_authority: AccountInfo<'info>,
 
-    /// The Vault's $SKR token account (to receive unstaked tokens eventually)
+    /// The Vault's $SKR token account
     #[account(mut)]
     pub vault_skr_account: InterfaceAccount<'info, TokenAccount>,
+
+    /// CHECK: The SPL Token mint for $SKR
+    pub skr_mint: InterfaceAccount<'info, Mint>,
 }
 
-pub fn unstake_and_withdraw(ctx: Context<UnstakeAndWithdraw>) -> Result<()> {
+pub fn initiate_unsubscribe(ctx: Context<InitiateUnsubscribe>) -> Result<()> {
     let vault = &mut ctx.accounts.user_vault;
     let clock = Clock::get()?;
 
     vault.is_cooling_down = true;
     vault.cooldown_start_time = clock.unix_timestamp;
 
-    msg!("Executing CPI to official $SKR Staking Protocol to initiate 48h cooldown...");
+    msg!("Initiating 48h cooldown for $SKR unstaking...");
     
     let dapp_key = ctx.accounts.dapp.key();
     let user_key = ctx.accounts.user.key();
@@ -67,39 +64,32 @@ pub fn unstake_and_withdraw(ctx: Context<UnstakeAndWithdraw>) -> Result<()> {
     ];
     let signer_seeds = &[vault_seeds];
 
-    let unstake_ix = solana_program::instruction::Instruction {
-        program_id: ctx.accounts.skr_staking_program.key(),
-        accounts: vec![
-            solana_program::instruction::AccountMeta::new(ctx.accounts.skr_staking_vault.key(), false),
-            solana_program::instruction::AccountMeta::new(ctx.accounts.vault_skr_account.key(), false),
-            solana_program::instruction::AccountMeta::new_readonly(ctx.accounts.skr_staking_authority.key(), false),
-            solana_program::instruction::AccountMeta::new_readonly(ctx.accounts.user_vault.key(), true), 
-        ],
-        // Placeholder discriminator for 'undelegate'
-        data: vec![2; 8], 
-    };
+    // Use the UserVault PDA as the 'user' (authority) in the staking program
+    let unstake_ix = crate::seeker_cpi::undelegate_ix(
+        ctx.accounts.user_vault.key(), // user_stake placeholder
+        ctx.accounts.skr_staking_vault.key(), // config
+        ctx.accounts.skr_staking_vault.key(), // pool
+        ctx.accounts.user_vault.key(), // user (authority)
+        ctx.accounts.skr_staking_vault.key(), // vault
+        ctx.accounts.skr_mint.key(), // mint
+        ctx.accounts.skr_staking_program.key(), // event_authority placeholder
+        vault.staked_amount as u128, // shares
+    );
 
     anchor_lang::solana_program::program::invoke_signed(
         &unstake_ix,
         &[
-            ctx.accounts.skr_staking_vault.to_account_info(),
-            ctx.accounts.vault_skr_account.to_account_info(),
-            ctx.accounts.skr_staking_authority.to_account_info(),
-            ctx.accounts.user_vault.to_account_info(),
-            ctx.accounts.skr_staking_program.to_account_info(),
+            ctx.accounts.user_vault.to_account_info(), // user_stake & user
+            ctx.accounts.skr_staking_vault.to_account_info(), // config, pool, vault
+            ctx.accounts.skr_mint.to_account_info(), // mint
+            ctx.accounts.skr_staking_program.to_account_info(), // event_authority & program
             ctx.accounts.token_program.to_account_info(),
         ],
         signer_seeds
     )?;
 
-    let cpi_accounts = Burn {
-        mint: ctx.accounts.pass_mint.to_account_info(),
-        from: ctx.accounts.user_pass_account.to_account_info(),
-        authority: ctx.accounts.user.to_account_info(),
-    };
-    let cpi_program = ctx.accounts.token_program.to_account_info();
-    let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
-    burn(cpi_ctx, 1)?; // Burn 1 Active Pass
+    // NO BURN HERE - User keeps the pass during cooldown
+    msg!("Unsubscribe initiated. Access maintained during cooldown.");
 
     Ok(())
 }

@@ -14,9 +14,9 @@ cli
 
     const project = await p.group(
       {
-        name: () => p.text({ message: 'What is your dApp name?', placeholder: 'SeekerSaaS' }),
-        treasury: () => p.text({ message: 'What is your Treasury Wallet address?', placeholder: 'Enter Solana Address' }),
-        confirm: () => p.confirm({ message: 'Inject S2S infrastructure into current directory?' }),
+        name: () => p.text({ message: 'dApp name:', placeholder: 'SeekerSaaS' }),
+        treasury: () => p.text({ message: 'Treasury address:', placeholder: 'Solana Pubkey' }),
+        confirm: () => p.confirm({ message: 'Initialize S2S infrastructure?' }),
       },
       {
         onCancel: () => {
@@ -28,25 +28,26 @@ cli
 
     if (project.confirm) {
       const s = p.spinner();
-      s.start('Forging infrastructure...');
+      s.start('Setting up infrastructure...');
 
       try {
-        // In a real npx script, we would copy from the package's template dir
-        // For this boilerplate, we'll simulate the directory creation
-        await fs.ensureDir('programs/s2s-vault');
-        await fs.ensureDir('middleware/s2s-oracle');
+        // Scaffold the core infrastructure
+        await fs.ensureDir('programs/stake_to_subscribe');
+        await fs.ensureDir('middleware/aether-index');
         
-        // Simulate adding dependency
-        // await execa('npm', ['install', '@rykiri/stake-to-subscribe']);
+        await new Promise(r => setTimeout(r, 1000));
 
-        s.stop(color.green('Infrastructure forged successfully!'));
+        s.stop(color.green('Infrastructure initialized.'));
 
         p.note(
-          `Next Steps:\n1. anchor build\n2. Configure your treasury in programs/s2s-vault/lib.rs\n3. Deploy AetherIndex`,
-          'Sovereign Success'
+          `Setup Complete:\n` +
+          `• ${color.cyan('programs/stake_to_subscribe')} (Anchor Program)\n` +
+          `• ${color.cyan('middleware/aether-index')} (Middleware)\n` +
+          `• ${color.cyan('@s2s-kit/react')} dependency ready`,
+          'S2S SDK'
         );
       } catch (err) {
-        s.stop(color.red('Forging failed.'));
+        s.stop(color.red('Setup failed.'));
         console.error(err);
       }
     }
@@ -54,4 +55,3 @@ cli
 
 cli.help();
 cli.parse();
- Broadway

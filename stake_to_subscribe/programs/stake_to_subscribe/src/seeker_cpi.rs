@@ -17,7 +17,10 @@ pub fn delegate_stake_ix(
     token_program: Pubkey,
     system_program: Pubkey,
     event_authority: Pubkey,
+    amount: u64,
 ) -> Instruction {
+    let mut data = vec![206, 176, 202, 18, 200, 209, 179, 108]; // 'stake' discriminator
+    data.extend_from_slice(&amount.to_le_bytes());
     Instruction {
         program_id: SKR_STAKING_PROGRAM,
         accounts: vec![
@@ -32,9 +35,9 @@ pub fn delegate_stake_ix(
             AccountMeta::new_readonly(token_program, false),
             AccountMeta::new_readonly(system_program, false),
             AccountMeta::new_readonly(event_authority, false),
-            AccountMeta::new_readonly(SKR_STAKING_PROGRAM, false), // program ID again for events
+            AccountMeta::new_readonly(SKR_STAKING_PROGRAM, false),
         ],
-        data: vec![206, 176, 202, 18, 200, 209, 179, 108], // 'stake' discriminator
+        data,
     }
 }
 
@@ -73,7 +76,10 @@ pub fn undelegate_ix(
     stake_vault: Pubkey,
     mint: Pubkey,
     event_authority: Pubkey,
+    shares: u128,
 ) -> Instruction {
+    let mut data = vec![90, 95, 107, 42, 205, 124, 50, 225]; // 'unstake' discriminator
+    data.extend_from_slice(&shares.to_le_bytes());
     Instruction {
         program_id: SKR_STAKING_PROGRAM,
         accounts: vec![
@@ -86,6 +92,31 @@ pub fn undelegate_ix(
             AccountMeta::new_readonly(event_authority, false),
             AccountMeta::new_readonly(SKR_STAKING_PROGRAM, false),
         ],
-        data: vec![90, 95, 107, 42, 205, 124, 50, 225], // 'unstake' discriminator
+        data,
+    }
+}
+
+pub fn withdraw_ix(
+    user_stake: Pubkey,
+    stake_config: Pubkey,
+    user: Pubkey,
+    stake_vault: Pubkey,
+    user_token_account: Pubkey,
+    token_program: Pubkey,
+    event_authority: Pubkey,
+) -> Instruction {
+    Instruction {
+        program_id: SKR_STAKING_PROGRAM,
+        accounts: vec![
+            AccountMeta::new(user_stake, false),
+            AccountMeta::new(stake_config, false),
+            AccountMeta::new_readonly(user, true),
+            AccountMeta::new(stake_vault, false),
+            AccountMeta::new(user_token_account, false),
+            AccountMeta::new_readonly(token_program, false),
+            AccountMeta::new_readonly(event_authority, false),
+            AccountMeta::new_readonly(SKR_STAKING_PROGRAM, false),
+        ],
+        data: vec![183, 18, 70, 156, 148, 109, 161, 34], // 'withdraw' discriminator
     }
 }

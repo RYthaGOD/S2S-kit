@@ -1,0 +1,218 @@
+:root {
+    --bg: #050505;
+    --fg: #ffffff;
+    --accent: #00FF66;
+    --accent-dim: rgba(0, 255, 102, 0.1);
+    --border: rgba(255, 255, 255, 0.1);
+    --font-sans: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.grid-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: -1;
+    pointer-events: none;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 80px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.logo span {
+    color: var(--accent);
+}
+
+.nav-links a {
+    color: var(--fg);
+    text-decoration: none;
+    margin-left: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.7;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    opacity: 1;
+    color: var(--accent);
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 80px;
+}
+
+.hero {
+    padding: 100px 0;
+    text-align: center;
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+}
+
+h1 {
+    font-size: 72px;
+    font-weight: 800;
+    letter-spacing: -3px;
+    line-height: 1.1;
+    margin-bottom: 24px;
+}
+
+h1 span {
+    background: linear-gradient(90deg, var(--fg), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+    font-size: 20px;
+    max-width: 600px;
+    margin: 0 auto 48px;
+    opacity: 0.6;
+}
+
+.hero-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+}
+
+.btn-primary {
+    padding: 16px 32px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    font-weight: 800;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 30px var(--accent-dim);
+    transform: translateY(-2px);
+}
+
+.terminal-cmd {
+    font-family: var(--font-mono);
+    padding: 16px 24px;
+    background: #111;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--accent);
+}
+
+.demo-section {
+    padding: 80px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.demo-card {
+    background: #0a0a0a;
+    border: 1px solid var(--border);
+    padding: 60px;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.card-header {
+    font-size: 12px;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 32px;
+    font-weight: 800;
+}
+
+.status-msg {
+    margin-top: 24px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    opacity: 0.5;
+}
+
+.integration {
+    padding: 100px 0;
+}
+
+.code-block {
+    background: #000;
+    border: 1px solid var(--border);
+    padding: 40px;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.comment { color: #555; }
+
+footer {
+    padding: 80px;
+    text-align: center;
+    opacity: 0.3;
+    font-size: 12px;
+}
+
+/* Reusing the S2S Button CSS for the demo */
+.s2s-btn-demo {
+    padding: 16px 40px;
+    background: #000;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-weight: 800;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.s2s-btn-demo.active {
+    background: var(--accent);
+    color: #000;
+}

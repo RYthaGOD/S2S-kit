@@ -1,5 +1,5 @@
 {
-  "name": "s2s-cli",
+  "name": "@s2s-kit/cli",
   "version": "1.0.0",
   "description": "The one-command integration for Stake-to-Subscribe infrastructure.",
   "main": "dist/index.js",

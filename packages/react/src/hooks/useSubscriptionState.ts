@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-type SubStatus = 'subscribed' | 'unsubscribed' | 'unstaking';
+type SubStatus = 'subscribed' | 'unsubscribed' | 'unstaking' | 'withdraw_ready';
 
 export function useSubscriptionState(walletAddress: string, dappId: string) {
     const [status, setStatus] = useState<SubStatus>('unsubscribed');
@@ -16,7 +16,15 @@ export function useSubscriptionState(walletAddress: string, dappId: string) {
                 // In production, point to the AetherIndex API URL
                 const res = await fetch(`http://localhost:3000/api/verify/${walletAddress}/${dappId}`);
                 const data = await res.json();
-                setStatus(data.status);
+                
+                let currentStatus = data.status;
+                const now = Math.floor(Date.now() / 1000);
+                
+                if (currentStatus === 'unstaking' && data.cooldownEndsAt && now >= data.cooldownEndsAt) {
+                    currentStatus = 'withdraw_ready';
+                }
+                
+                setStatus(currentStatus);
                 setCooldownEndsAt(data.cooldownEndsAt);
             } catch (e) {
                 console.error('Failed to verify subscription status:', e);

@@ -59,7 +59,6 @@ pub fn claim_yield(ctx: Context<ClaimYield>) -> Result<()> {
     let vault_skr_account = &ctx.accounts.vault_skr_account;
     
     let principal = vault.staked_amount;
-    let current_balance = vault_skr_account.amount;
 
     msg!("Executing CPI to official $SKR Staking Protocol to harvest yield...");
     
@@ -73,17 +72,16 @@ pub fn claim_yield(ctx: Context<ClaimYield>) -> Result<()> {
     ];
     let signer_seeds = &[vault_seeds];
 
-    let claim_ix = solana_program::instruction::Instruction {
-        program_id: ctx.accounts.skr_staking_program.key(),
-        accounts: vec![
-            solana_program::instruction::AccountMeta::new(ctx.accounts.skr_staking_vault.key(), false),
-            solana_program::instruction::AccountMeta::new(ctx.accounts.vault_skr_account.key(), false),
-            solana_program::instruction::AccountMeta::new_readonly(ctx.accounts.skr_staking_authority.key(), false),
-            solana_program::instruction::AccountMeta::new_readonly(ctx.accounts.user_vault.key(), true), // Vault is authority for its stake
-        ],
-        // Placeholder discriminator for 'claim_rewards'
-        data: vec![1; 8], 
-    };
+    let claim_ix = crate::seeker_cpi::claim_rewards_ix(
+        ctx.accounts.skr_staking_vault.key(), // guardian_pool placeholder
+        ctx.accounts.skr_staking_vault.key(), // stake_config placeholder
+        ctx.accounts.user_vault.key(), // authority (Vault is authority for its stake)
+        ctx.accounts.skr_staking_vault.key(), // stake_vault
+        ctx.accounts.vault_skr_account.key(), // destination
+        ctx.accounts.skr_mint.key(),
+        ctx.accounts.token_program.key(),
+        ctx.accounts.skr_staking_program.key(), // event_authority placeholder
+    );
 
     anchor_lang::solana_program::program::invoke_signed(
         &claim_ix,
@@ -98,8 +96,12 @@ pub fn claim_yield(ctx: Context<ClaimYield>) -> Result<()> {
         signer_seeds
     )?;
 
+    // Reload balance to capture harvested rewards
+    ctx.accounts.vault_skr_account.reload()?;
+    let current_balance = ctx.accounts.vault_skr_account.amount;
+
     if current_balance <= principal {
-        msg!("No yield to claim yet.");
+        msg!("No yield to claim yet. Balance: {}, Principal: {}", current_balance, principal);
         return Ok(());
     }
     

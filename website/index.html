@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S2S | Stake-to-Subscribe Infrastructure</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="grid-overlay"></div>
+    
+    <nav>
+        <div class="logo">S2S<span>.kit</span></div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#integration">Integration</a>
+            <a href="https://github.com/RYthaGOD/S2S-kit" target="_blank" class="gh-link">GitHub</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="badge">Seeker Optimized</div>
+            <h1>Revenue without <span>Spending.</span></h1>
+            <p>The ultimate monetization layer for Solana Mobile. Users stake $SKR, you capture yield. Total cost to user: 0.</p>
+            
+            <div class="hero-actions">
+                <button class="btn-primary" onclick="scrollToIntegration()">Get Started</button>
+                <div class="terminal-cmd">npx s2s-cli init</div>
+            </div>
+        </section>
+
+        <section class="demo-section">
+            <div class="demo-card">
+                <div class="card-header">Live SDK Demo</div>
+                <div id="demo-button-container">
+                    <!-- Button logic injected via JS -->
+                </div>
+                <div class="status-msg" id="status-text">Ready to Stake</div>
+            </div>
+        </section>
+
+        <section id="integration" class="integration">
+            <h2>Integration in <span>Seconds.</span></h2>
+            <div class="code-block">
+                <pre><code><span class="comment">// 1. Install</span>
+npm i @rykiri/stake-to-subscribe
+
+<span class="comment">// 2. Drop in</span>
+&lt;SubscribeButton 
+  amount={100}
+  onStake={handleStake}
+/&gt;</code></pre>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 S2S Infrastructure. Built by Rykiri.</p>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

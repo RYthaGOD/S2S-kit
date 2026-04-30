@@ -24,8 +24,12 @@ pub mod stake_to_subscribe {
         instructions::stake_and_subscribe::stake_and_subscribe(ctx, amount)
     }
 
-    pub fn unstake_and_withdraw(ctx: Context<UnstakeAndWithdraw>) -> Result<()> {
-        instructions::unstake_and_withdraw::unstake_and_withdraw(ctx)
+    pub fn initiate_unsubscribe(ctx: Context<InitiateUnsubscribe>) -> Result<()> {
+        instructions::initiate_unsubscribe::initiate_unsubscribe(ctx)
+    }
+
+    pub fn withdraw_stake(ctx: Context<WithdrawStake>) -> Result<()> {
+        instructions::withdraw_stake::withdraw_stake(ctx)
     }
 
     pub fn claim_yield(ctx: Context<ClaimYield>) -> Result<()> {

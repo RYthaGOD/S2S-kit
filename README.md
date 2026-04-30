@@ -1,23 +1,23 @@
 # Stake-to-Subscribe (S2S)
 
-> "The mission is zero acquisition cost. Subscription revenue without user spending."
-
-Stake-to-Subscribe is an elite, autonomous infrastructure for Solana Mobile (Seeker) dApps. It allows users to subscribe to your service by staking **$SKR** tokens into a non-custodial vault, delegating them to a Guardian, and routing the yield to your treasury.
+Stake-to-Subscribe is an infrastructure for Solana Mobile (Seeker) dApps. It allows users to subscribe to services by staking **$SKR** tokens into a non-custodial vault, delegating them to a Guardian, and routing the yield to the developer treasury.
 
 ## ⚡ Features
 
 - **Non-Custodial Staking:** Users retain ownership of their principal.
-- **Token-2022 Active Pass:** Automated minting of soulbound subscription NFTs.
-- **Zero-Acquisition Friction:** Users don't "pay"—they "stake". Total cost to user = 0.
-- **Autonomous Treasury:** On-chain cranks for yield harvesting and Jupiter-based compounding.
-- **Industrial Futurism UI:** Precision-engineered React components for the Seeker device.
+- **Token-2022 Active Pass:** Automatic minting of non-transferable subscription passes.
+- **Zero-Cost Subscriptions:** Users subscribe via opportunity cost rather than capital spend.
+- **Automated Treasury:** On-chain mechanisms for yield harvesting and distribution.
+- **React Components:** Pre-built UI components for the Seeker device.
 
 ## 🛠️ Integration
 
-### 1. Installation
+### ⚡ Quick Start
+
+Forge your S2S infrastructure with a single command:
 
 ```bash
-npm install @rykiri/stake-to-subscribe
+npx @s2s-kit/cli init
 ```
 
 ### 2. Styles
@@ -25,21 +25,25 @@ npm install @rykiri/stake-to-subscribe
 Import the precision theme in your `_app.tsx` or `main.tsx`:
 
 ```tsx
-import '@rykiri/stake-to-subscribe/dist/theme.css';
+import '@s2s-kit/react/theme.css';
 ```
 
 ### 3. Implementation
 
 ```tsx
-import { SubscribeButton } from '@rykiri/stake-to-subscribe';
+import { SubscribeButton } from '@s2s-kit/react';
 
 export function MyDapp() {
   const handleStake = async () => {
     // Call the Anchor program's stake_and_subscribe instruction
   };
 
-  const handleUnstake = async () => {
-    // Call the Anchor program's unstake_and_withdraw instruction
+  const handleUnsubscribe = async () => {
+    // Call 'initiate_unsubscribe' (starts 48h cooldown)
+  };
+
+  const handleWithdraw = async () => {
+    // Call 'withdraw_stake' (final burn + return $SKR)
   };
 
   return (
@@ -50,7 +54,8 @@ export function MyDapp() {
         walletAddress={publicKey.toBase58()}
         amount={100}
         onStake={handleStake}
-        onUnstake={handleUnstake}
+        onUnsubscribe={handleUnsubscribe}
+        onWithdraw={handleWithdraw}
       />
     </div>
   );

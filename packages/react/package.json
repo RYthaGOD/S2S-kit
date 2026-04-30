@@ -1,5 +1,5 @@
 {
-  "name": "@rykiri/stake-to-subscribe",
+  "name": "@s2s-kit/react",
   "version": "1.0.0",
   "description": "Frictionless, zero-acquisition-cost subscription components for Solana Mobile.",
   "main": "./dist/index.js",

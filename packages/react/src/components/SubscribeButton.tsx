@@ -8,14 +8,15 @@ interface SubscribeButtonProps {
     walletAddress: string;
     amount: number;
     onStake: () => Promise<void>;
-    onUnstake: () => Promise<void>;
+    onUnsubscribe: () => Promise<void>;
+    onWithdraw: () => Promise<void>;
 }
 
-export const SubscribeButton: React.FC<SubscribeButtonProps> = ({ dappId, walletAddress, amount, onStake, onUnstake }) => {
+export const SubscribeButton: React.FC<SubscribeButtonProps> = ({ dappId, walletAddress, amount, onStake, onUnsubscribe, onWithdraw }) => {
     const { status, cooldownEndsAt, isLoading } = useSubscriptionState(walletAddress, dappId);
     const [timeLeft, setTimeLeft] = useState<string>('');
 
-    // Countdown logic for the Grace Period
+    // Countdown logic for the Cooldown Period
     useEffect(() => {
         if (status !== 'unstaking' || !cooldownEndsAt) return;
         
@@ -47,6 +48,7 @@ export const SubscribeButton: React.FC<SubscribeButtonProps> = ({ dappId, wallet
                     className="s2s-btn s2s-btn-primary"
                     onClick={onStake}
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                 >
                     Stake {amount} $SKR to Subscribe
                 </motion.button>
@@ -56,10 +58,11 @@ export const SubscribeButton: React.FC<SubscribeButtonProps> = ({ dappId, wallet
                 <motion.button 
                     key="active"
                     className="s2s-btn s2s-btn-active"
-                    onClick={onUnstake}
+                    onClick={onUnsubscribe}
                     initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                    whileHover={{ scale: 1.02 }}
                 >
-                    <span className="s2s-pulse-dot" /> Subscribed
+                    <span className="s2s-pulse-dot" /> Subscribed (Unsubscribe?)
                 </motion.button>
             )}
 
@@ -69,8 +72,20 @@ export const SubscribeButton: React.FC<SubscribeButtonProps> = ({ dappId, wallet
                     className="s2s-btn s2s-btn-cooldown"
                     initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
                 >
-                    Unlocking in: <span className="s2s-mono">{timeLeft}</span>
+                    Access Active — Unlocking in: <span className="s2s-mono">{timeLeft}</span>
                 </motion.div>
+            )}
+
+            {status === 'withdraw_ready' && (
+                <motion.button 
+                    key="withdraw"
+                    className="s2s-btn s2s-btn-withdraw"
+                    onClick={onWithdraw}
+                    initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
+                    whileHover={{ scale: 1.05 }}
+                >
+                    Withdraw {amount} $SKR & Close Pass
+                </motion.button>
             )}
         </AnimatePresence>
     );

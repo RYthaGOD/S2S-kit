@@ -1,4 +1,4 @@
-# S2S: The Sovereign Subscription Marketing Playbook
+# S2S Marketing Playbook
 
 You aren't just selling a boilerplate; you're selling a new economic paradigm for the mobile web.
 
@@ -11,14 +11,14 @@ You aren't just selling a boilerplate; you're selling a new economic paradigm fo
 3. **Hardware Sovereignty:** Built specifically for the Solana Seeker. No gatekeepers. No middleman (except for a tiny 5% infrastructure fee).
 
 ## 📣 Channel Strategy
-- **X (Twitter):** Run a thread: *"Why paying for apps with USD is a legacy bug. 🧵"*. Highlight the TVL vs. Revenue math.
-- **Solana Mobile Ecosystem:** Pitch it as the standard monetization layer for Seeker dApps. Use the "Precision Minimalist" UI screenshots to show it feels native.
-- **Developer Advocacy:** Position the `npx s2s-cli init` command as the "one-click business model" for hackathon winners.
+- **X (Twitter):** Run a thread on the benefits of stake-based monetization.
+- **Solana Mobile Ecosystem:** Pitch as a native monetization standard for Seeker dApps.
+- **Developer Advocacy:** Position `npx @s2s-kit/cli init` as the standard setup tool.
 
 ## 🎨 Aesthetic Direction
 - **Name:** S2S (Stake-to-Subscribe).
-- **Vibe:** Industrial Futurism. Dark mode. High-fidelity motion. Cyber-corporate but sovereign.
-- **Logo Idea:** A precision-engineered lock being fueled by a pulsing Solana spark.
+- **Vibe:** Clean, dark-mode, professional.
+- **Style:** Minimalist and device-native.
 
 ---
 
