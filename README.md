@@ -1,50 +1,79 @@
-# ⚡ S2S-Kit: Sovereign Stake-to-Subscribe
-### *Hardened Liquidity Monetization for the Seeker dApp Ecosystem.*
+# S2S-Kit: Liquid Staking Subscription Protocol
+### Non-custodial monetization for the Solana Seeker ecosystem.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/badge/Anchor-0.32.1-blue.svg)](https://coral-xyz.github.io/anchor/)
-[![Platform](https://img.shields.io/badge/Solana-Seeker-green.svg)](https://solanamobile.com/)
-
-S2S-Kit is a production-grade, hardened monetization framework built specifically for **Solana Mobile (Seeker)**. By leveraging the **SKR Liquid Staking Protocol**, S2S allows developers to capture sustainable yield while users retain 100% principal control. **No monthly charges. No friction. Just sovereign code.**
+S2S-Kit is a framework for implementing stake-based subscriptions on Solana. It enables dApp developers to capture yield from user deposits in the **SKR Liquid Staking Protocol** while ensuring users maintain ownership of their principal.
 
 ---
 
-## 🌟 The Vision: "Monetize Like a Sovereign"
-Traditional subscription models are dying. Credit card churn, high platform fees, and custodial risks are relics of the past. S2S-Kit establishes a new primitive: **Yield-as-a-Service (YaaS)**.
+## 🏗️ Technical Architecture
 
-### 🛡️ Hardened Architectural Primitives
-*   **Zero-Config SDK**: The React SDK automatically resolves complex **17-account mappings** across the S2S and SKR protocols, providing a 1-line integration experience.
-*   **Anchor 0.32 & Token-2022**: Built on the cutting edge of Solana infrastructure. Utilizes non-transferable mints, metadata pointers, and strictly typed account structs.
-*   **1e12 Scaling Index**: Pro-rata yield distribution across infinite dApps via a high-precision, on-chain mathematical engine.
-*   **48h Hardened Cooldown**: Enforces protocol integrity while maintaining user access during the unstaking grace period (Seeker UX Standard).
+The protocol acts as a middleware layer between users and the official Solana Mobile $SKR staking program. It manages a multi-tenant vault system where user funds are delegated to high-yield Guardians via Cross-Program Invocations (CPI).
 
----
+### 1. Staking and Authorization Flow
+When a user stakes, the program initializes a `UserVault` and a `Subscription` account. It then performs a CPI to the SKR protocol to delegate the user's $SKR.
 
-## 🚀 Quick Start: The One-Command Integration
+```mermaid
+sequenceDiagram
+    participant User
+    participant SDK
+    participant S2S_Program
+    participant SKR_Protocol
+    participant Token_2022
 
-### 1. Initialize Infrastructure
-Scaffold your project and initialize the protocol on-chain in seconds.
-```bash
-# Install the toolkit
-npm install -g @s2s-kit/cli
-
-# Initialize local project
-s2s init
-
-# Configure protocol on-chain (Devnet/Mainnet)
-s2s init-protocol --treasury <YOUR_TREASURY_PUBKEY> --fee 500
+    User->>SDK: stake(amount)
+    SDK->>S2S_Program: stake_and_subscribe(amount)
+    S2S_Program->>S2S_Program: Initialize UserVault & Subscription
+    S2S_Program->>SKR_Protocol: CPI: delegate_stake(amount)
+    S2S_Program->>Token_2022: CPI: mint_to(ActivePass)
+    Token_2022-->>User: Non-transferable Mint
+    S2S_Program-->>User: Transaction Success
 ```
 
-### 2. Plug into the React SDK
-Wrap your application in the `S2SProvider` and utilize the `useS2S` hook to gate premium features.
+### 2. Pro-rata Yield Distribution
+Yield is realized when the program harvests rewards from the SKR protocol. The protocol calculates a global yield index to ensure fair distribution across all integrated dApps.
+
+```mermaid
+graph TD
+    A[SKR Protocol Yield] -->|Harvest| B[S2S Shared Vault]
+    B -->|Protocol Fee 5%| C[S2S Treasury]
+    B -->|Distributable Yield| D{Yield Indexer}
+    D -->|Scale: 1e12| E[dApp A Treasury]
+    D -->|Scale: 1e12| F[dApp B Treasury]
+    D -->|Scale: 1e12| G[dApp N Treasury]
+```
+
+### 3. Unsubscription and Cooldown
+To prevent yield manipulation, the protocol enforces a 48-hour cooldown period. During this time, the user's Active Pass remains valid, but the staking principal is transitioning to a liquid state.
+
+---
+
+## 🛠️ Developer Toolkit
+
+### CLI Commands
+The `@s2s-kit/cli` provides on-chain administrative capabilities:
+*   `s2s init`: Scaffolds the project structure.
+*   `s2s init-protocol --treasury <PUBKEY>`: Configures the global protocol state, including the Token-2022 pass mint and fee structure.
+*   `s2s register-dapp --treasury <PUBKEY>`: Registers a unique dApp ID and treasury for yield routing.
+
+### React SDK
+The SDK abstracts the account resolution for the 17+ mandatory accounts required by the underlying SKR protocol.
+
 ```tsx
 import { S2SProvider, useS2S } from '@s2s-kit/react';
 
-const PremiumApp = () => {
+// Wrap your app in the provider
+const App = () => (
+  <S2SProvider>
+    <YourComponents />
+  </S2SProvider>
+);
+
+const Feature = () => {
   const { status, stakeAndSubscribe } = useS2S();
 
+  // Statuses: LOADING, ACTIVE, GRACE_PERIOD, UNSTAKING, EXPIRED, UNSUBSCRIBED
   if (status === 'UNSUBSCRIBED') {
-    return <button onClick={() => stakeAndSubscribe(100, "dapp_id")}>Unlock Premium</button>;
+    return <button onClick={() => stakeAndSubscribe(10e9, "DAPP_ID")}>Stake 10 SKR</button>;
   }
 
   return <PremiumContent />;
@@ -53,23 +82,10 @@ const PremiumApp = () => {
 
 ---
 
-## 🏗️ Architecture
-1.  **Non-Custodial Stake**: User tokens are delegated via CPI to official high-yield Guardians.
-2.  **Active Pass Issuance**: A Token-2022 Active Pass is minted to the user's wallet as an immutable, non-transferable proof of subscription.
-3.  **Real-Time Authorization**: The Aether Indexer detects the stake and grants instant access, bypassing reward epoch delays.
-4.  **Sovereign Yield Routing**: Yield is harvested every 48h, routing protocol fees and dApp credits via the shared on-chain index.
+## 🛡️ Protocol Security
+*   **Non-Custodial**: Principal control is maintained via the `UserVault` PDA. Withdrawal is only possible to the original user authority after the cooldown period.
+*   **Anchor 0.32**: Built using the latest Anchor framework with explicit instruction handlers to prevent namespace shadowing.
+*   **Token-2022**: Utilizes the non-transferable extension to ensure subscription passes cannot be traded or moved between wallets.
 
 ---
-
-## 🛡️ Security & Verifiability
-S2S-Kit is built for high-stakes enterprise safety.
-*   **Deterministic PDAs**: Zero "admin" keys. All routing is governed by immutable seeds and math.
-*   **Verifiable Builds**: All program deployments are compatible with `solana-verify` for public audibility.
-*   **Auditability**: Every instruction entry point follows the `handler()` pattern for maximum namespace isolation.
-
-## 🇦🇺 Superteam Australia Grant
-Applied for the **Solana Foundation Australia Grant ($10k)** to establish S2S as the native monetization standard for the 2026 Seeker ecosystem. 
-- **Status**: Hardening Sprint Complete. Review Pending.
-
----
-*Built for the Seeker. Powered by Solana. Architected by Rykiri.*
+*Built for the Seeker Ecosystem. Licensed under MIT.*
