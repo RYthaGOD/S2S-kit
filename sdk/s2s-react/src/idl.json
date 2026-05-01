@@ -4,7 +4,7 @@
     "name": "stake_to_subscribe",
     "version": "0.1.0",
     "spec": "0.1.0",
-    "description": "Hardened Stake-to-Subscribe Liquid Staking Protocol"
+    "description": "Hardened Stake-to-Subscribe Delegated Staking Protocol"
   },
   "instructions": [
     {
