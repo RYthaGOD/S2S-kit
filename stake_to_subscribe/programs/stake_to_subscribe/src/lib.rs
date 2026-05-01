@@ -31,8 +31,9 @@ pub mod stake_to_subscribe {
         dapp_id: [u8; 32],
         treasury: Pubkey,
         guardian_vote_account: Pubkey,
+        min_stake_amount: u64,
     ) -> Result<()> {
-        instructions::initialize_dapp::handler(ctx, dapp_id, treasury, guardian_vote_account)
+        instructions::initialize_dapp::handler(ctx, dapp_id, treasury, guardian_vote_account, min_stake_amount)
     }
 
     pub fn stake_and_subscribe(ctx: Context<StakeAndSubscribe>, amount: u64, dapp_id: [u8; 32]) -> Result<()> {

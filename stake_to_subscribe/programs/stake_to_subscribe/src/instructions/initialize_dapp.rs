@@ -33,12 +33,14 @@ pub fn handler(
     dapp_id: [u8; 32],
     treasury: Pubkey,
     guardian_vote_account: Pubkey,
+    min_stake_amount: u64,
 ) -> Result<()> {
     let dapp = &mut ctx.accounts.dapp;
     dapp.dapp_id = dapp_id;
     dapp.authority = ctx.accounts.authority.key();
     dapp.treasury = treasury;
     dapp.guardian_vote_account = guardian_vote_account;
+    dapp.min_stake_amount = min_stake_amount;
     dapp.bump = ctx.bumps.dapp;
 
     let config = &mut ctx.accounts.config;

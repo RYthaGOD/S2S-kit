@@ -73,7 +73,8 @@
       "args": [
         { "name": "dapp_id", "type": { "array": ["u8", 32] } },
         { "name": "treasury", "type": "pubkey" },
-        { "name": "guardian_vote_account", "type": "pubkey" }
+        { "name": "guardian_vote_account", "type": "pubkey" },
+        { "name": "min_stake_amount", "type": "u64" }
       ]
     },
     {

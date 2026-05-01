@@ -70,5 +70,58 @@ cli
     }
   });
 
+cli
+  .command('register-dapp', 'Register your dApp in the S2S protocol')
+  .option('--id <hex>', '32-byte hex dApp identifier')
+  .option('--treasury <pubkey>', 'dApp treasury address for yield routing')
+  .option('--min-stake <amount>', 'Minimum SKR stake required for access', { default: '1000000000' })
+  .action(async (options) => {
+    p.intro(color.magenta('S2S dApp Registration'));
+
+    const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+    const keyPath = `${process.env.HOME}/.config/solana/id.json`;
+    if (!fs.existsSync(keyPath)) {
+        p.log.error('Local Solana keypair not found at ~/.config/solana/id.json');
+        return;
+    }
+    const keypair = Keypair.fromSecretKey(new Uint8Array(JSON.parse(fs.readFileSync(keyPath, 'utf-8'))));
+    const wallet = new Wallet(keypair);
+    const provider = new AnchorProvider(connection, wallet, { commitment: 'confirmed' });
+    const program = new Program(idl as Idl, PROGRAM_ID, provider);
+
+    const s = p.spinner();
+    s.start('Registering dApp on-chain...');
+
+    try {
+        const dappIdBuf = Buffer.alloc(32);
+        Buffer.from(options.id, 'hex').copy(dappIdBuf);
+        
+        const [config] = PublicKey.findProgramAddressSync([Buffer.from("global_config")], PROGRAM_ID);
+        const [dapp] = PublicKey.findProgramAddressSync([Buffer.from("dapp"), dappIdBuf], PROGRAM_ID);
+
+        const tx = await program.methods
+            .initializeDapp(
+                Array.from(dappIdBuf),
+                new PublicKey(options.treasury),
+                keypair.publicKey, // Guardian vote account
+                new BN(options.min_stake)
+            )
+            .accounts({
+                authority: keypair.publicKey,
+                config,
+                dapp,
+                systemProgram: SystemProgram.programId,
+            })
+            .rpc();
+
+        s.stop(color.green(`dApp registered: ${tx}`));
+        p.note(`PDA: ${dapp.toBase58()}`, 'dApp Registry');
+        p.outro('dApp is now active in the S2S index.');
+    } catch (err) {
+        s.stop(color.red('Registration failed.'));
+        console.error(err);
+    }
+  });
+
 cli.help();
 cli.parse();

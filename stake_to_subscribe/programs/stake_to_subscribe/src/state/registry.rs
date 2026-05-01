@@ -21,5 +21,6 @@ pub struct DappRegistry {
     pub authority: Pubkey,
     pub treasury: Pubkey,
     pub guardian_vote_account: Pubkey,
+    pub min_stake_amount: u64, // The amount of $SKR required to access this dApp
     pub bump: u8,
 }

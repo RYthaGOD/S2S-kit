@@ -113,6 +113,9 @@ pub fn handler(ctx: Context<StakeAndSubscribe>, amount: u64, _dapp_id: [u8; 32])
         vault.staked_amount = total_stake;
     }
 
+    // 2b. Check dApp-specific minimum
+    require!(vault.staked_amount >= ctx.accounts.dapp.min_stake_amount, ErrorCode::InsufficientStake);
+
     let user_key = ctx.accounts.user.key();
     let vault_seeds: &[&[u8]] = &[
         b"vault",
