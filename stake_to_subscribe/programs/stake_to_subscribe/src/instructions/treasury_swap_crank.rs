@@ -15,7 +15,7 @@ pub struct TreasurySwapCrank<'info> {
     // In a real Jupiter CPI, you need many remaining accounts for the swap route
 }
 
-pub fn treasury_swap_crank(ctx: Context<TreasurySwapCrank>, amount_to_swap: u64, _swap_data: Vec<u8>) -> Result<()> {
+pub fn handler(ctx: Context<TreasurySwapCrank>, amount_to_swap: u64, _swap_data: Vec<u8>) -> Result<()> {
     // 1. Validate treasury authority / ownership
     // 2. Parse the swap_data for the Jupiter CPI
     // 3. Invoke Jupiter program with the remaining accounts provided in the transaction

@@ -1,31 +1,34 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::pubkey;
 use anchor_spl::token_interface::{burn, Burn, Mint, TokenAccount, TokenInterface, transfer_checked, TransferChecked};
 
-pub const SKR_STAKING_PROGRAM: Pubkey = pubkey!("SKRskrmtL83pcL4YqLWt6iPefDqwXQWHSw9S9vz94BZ");
-pub const SKR_STAKING_VAULT: Pubkey = pubkey!("8isViKbwhuhFhsv2t8vaFL74pKCqaFPQXo1KkeQwZbB8");
 
-use crate::state::{DappRegistry, UserVault};
-use crate::error::ErrorCode;
+
+use crate::state::{UserVault, GlobalConfig};
+use crate::errors::ErrorCode;
 
 #[derive(Accounts)]
 pub struct WithdrawStake<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
-    #[account(seeds = [b"dapp", dapp.authority.as_ref()], bump = dapp.bump)]
-    pub dapp: Account<'info, DappRegistry>,
+    #[account(seeds = [b"global_config"], bump = config.bump)]
+    pub config: Account<'info, GlobalConfig>,
 
     #[account(
         mut,
         close = user,
-        seeds = [b"vault", dapp.key().as_ref(), user.key().as_ref()],
+        seeds = [b"vault", user.key().as_ref()],
         bump = user_vault.bump
     )]
     pub user_vault: Account<'info, UserVault>,
 
-    /// The Token-2022 Active Pass Mint
-    #[account(mut)]
+    /// The Shared Token-2022 Active Pass Mint
+    #[account(
+        mut,
+        address = config.pass_mint,
+        seeds = [b"pass_mint"],
+        bump,
+    )]
     pub pass_mint: InterfaceAccount<'info, Mint>,
 
     /// The user's Active Pass token account to burn from
@@ -47,15 +50,22 @@ pub struct WithdrawStake<'info> {
     pub system_program: Program<'info, System>,
     
     /// CHECK: The official Solana Mobile $SKR Staking Program
-    #[account(address = SKR_STAKING_PROGRAM)]
+    #[account(address = crate::SKR_STAKING_PROGRAM)]
     pub skr_staking_program: AccountInfo<'info>,
 
+    /// CHECK: The official $SKR Staking Config
+    pub skr_stake_config: AccountInfo<'info>,
+
     /// CHECK: The official $SKR Staking Vault
-    #[account(mut, address = SKR_STAKING_VAULT)]
+    #[account(mut, address = crate::SKR_STAKING_VAULT)]
     pub skr_staking_vault: AccountInfo<'info>,
+
+    /// CHECK: The User's Stake account within the official SKR protocol
+    #[account(mut)]
+    pub official_user_stake: AccountInfo<'info>,
 }
 
-pub fn withdraw_stake(ctx: Context<WithdrawStake>) -> Result<()> {
+pub fn handler(ctx: Context<WithdrawStake>) -> Result<()> {
     let vault = &ctx.accounts.user_vault;
     let clock = Clock::get()?;
 
@@ -64,11 +74,9 @@ pub fn withdraw_stake(ctx: Context<WithdrawStake>) -> Result<()> {
     let elapsed = clock.unix_timestamp.checked_sub(vault.cooldown_start_time).unwrap();
     require!(elapsed >= 48 * 3600, ErrorCode::CooldownNotFinished); // 48 hours
 
-    let dapp_key = ctx.accounts.dapp.key();
     let user_key = ctx.accounts.user.key();
     let vault_seeds: &[&[u8]] = &[
         b"vault",
-        dapp_key.as_ref(),
         user_key.as_ref(),
         &[vault.bump],
     ];
@@ -77,20 +85,25 @@ pub fn withdraw_stake(ctx: Context<WithdrawStake>) -> Result<()> {
     // 2. Finalize Withdraw on Staking Program via CPI
     msg!("Finalizing withdrawal from official $SKR Staking Protocol...");
     
+    let event_authority = crate::seeker_cpi::get_event_authority(&ctx.accounts.skr_staking_program.key());
+
     let withdraw_ix = crate::seeker_cpi::withdraw_ix(
-        ctx.accounts.user_vault.key(), // user_stake placeholder
-        ctx.accounts.skr_staking_vault.key(), // stake_config
-        ctx.accounts.user_vault.key(), // user (authority)
-        ctx.accounts.skr_staking_vault.key(), // stake_vault
-        ctx.accounts.vault_skr_account.key(), // user_token_account
+        ctx.accounts.official_user_stake.key(),
+        ctx.accounts.skr_stake_config.key(),
+        vault.key(), // Authority in SKR is our Vault
+        ctx.accounts.skr_staking_vault.key(),
+        ctx.accounts.vault_skr_account.key(),
         ctx.accounts.token_program.key(),
-        ctx.accounts.skr_staking_program.key(), // event_authority placeholder
+        event_authority,
+        ctx.accounts.skr_staking_program.key(),
     );
 
     anchor_lang::solana_program::program::invoke_signed(
         &withdraw_ix,
         &[
-            ctx.accounts.user_vault.to_account_info(),
+            ctx.accounts.official_user_stake.to_account_info(),
+            ctx.accounts.skr_stake_config.to_account_info(),
+            vault.to_account_info(),
             ctx.accounts.skr_staking_vault.to_account_info(),
             ctx.accounts.vault_skr_account.to_account_info(),
             ctx.accounts.skr_staking_program.to_account_info(),
@@ -100,17 +113,16 @@ pub fn withdraw_stake(ctx: Context<WithdrawStake>) -> Result<()> {
     )?;
 
     // 3. Burn the Active Pass
-    msg!("Burning Active Pass to finalize unsubscription...");
+    msg!("Burning Active Pass to finalize unsubscription from Shared Vault...");
     let burn_accounts = Burn {
         mint: ctx.accounts.pass_mint.to_account_info(),
         from: ctx.accounts.user_pass_account.to_account_info(),
         authority: ctx.accounts.user.to_account_info(),
     };
-    let burn_ctx = CpiContext::new(
-        ctx.accounts.token_program.to_account_info(),
-        burn_accounts,
-    );
-    burn(burn_ctx, 1)?;
+    burn(
+        CpiContext::new(ctx.accounts.token_program.to_account_info(), burn_accounts),
+        1
+    )?;
 
     // 4. Transfer $SKR back to User
     ctx.accounts.vault_skr_account.reload()?;
@@ -121,12 +133,11 @@ pub fn withdraw_stake(ctx: Context<WithdrawStake>) -> Result<()> {
         to: ctx.accounts.user_skr_account.to_account_info(),
         authority: ctx.accounts.user_vault.to_account_info(),
     };
-    let transfer_ctx = CpiContext::new_with_signer(
-        ctx.accounts.token_program.to_account_info(),
-        transfer_accounts,
-        signer_seeds,
-    );
-    transfer_checked(transfer_ctx, amount, ctx.accounts.skr_mint.decimals)?;
+    transfer_checked(
+        CpiContext::new_with_signer(ctx.accounts.token_program.to_account_info(), transfer_accounts, signer_seeds),
+        amount,
+        ctx.accounts.skr_mint.decimals
+    )?;
 
     Ok(())
 }

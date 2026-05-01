@@ -1,29 +1,38 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::pubkey;
-use anchor_spl::token_interface::{mint_to, transfer_checked, Mint, MintTo, TokenAccount, TokenInterface, TransferChecked};
+use anchor_spl::token_interface::{mint_to, Mint, MintTo, TokenAccount, TokenInterface, TransferChecked, transfer_checked};
 
-pub const SKR_STAKING_PROGRAM: Pubkey = pubkey!("SKRskrmtL83pcL4YqLWt6iPefDqwXQWHSw9S9vz94BZ");
-pub const SKR_STAKING_VAULT: Pubkey = pubkey!("8isViKbwhuhFhsv2t8vaFL74pKCqaFPQXo1KkeQwZbB8");
-pub const SKR_STAKING_AUTHORITY: Pubkey = pubkey!("4HQy82s9CHTv1GsYKnANHMiHfhcqesYkK6sB3RDSYyqw");
-
-use crate::state::{DappRegistry, UserVault};
+use crate::state::{DappRegistry, UserVault, GlobalConfig, Subscription};
+use crate::errors::ErrorCode;
 
 #[derive(Accounts)]
+#[instruction(amount: u64, dapp_id: [u8; 32])]
 pub struct StakeAndSubscribe<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
-    #[account(mut, seeds = [b"dapp", dapp.authority.as_ref()], bump = dapp.bump)]
+    #[account(seeds = [b"global_config"], bump = config.bump)]
+    pub config: Account<'info, GlobalConfig>,
+
+    #[account(mut, seeds = [b"dapp", dapp_id.as_ref()], bump = dapp.bump)]
     pub dapp: Account<'info, DappRegistry>,
 
     #[account(
-        init,
+        init_if_needed,
         payer = user,
         space = 8 + UserVault::INIT_SPACE,
-        seeds = [b"vault", dapp.key().as_ref(), user.key().as_ref()],
+        seeds = [b"vault", user.key().as_ref()],
         bump
     )]
     pub user_vault: Account<'info, UserVault>,
+
+    #[account(
+        init_if_needed,
+        payer = user,
+        space = 8 + Subscription::INIT_SPACE,
+        seeds = [b"subscription", user.key().as_ref(), dapp.key().as_ref()],
+        bump
+    )]
+    pub subscription: Account<'info, Subscription>,
 
     /// CHECK: The SPL Token mint for $SKR
     pub skr_mint: InterfaceAccount<'info, Mint>,
@@ -36,8 +45,13 @@ pub struct StakeAndSubscribe<'info> {
     #[account(mut)]
     pub vault_skr_account: InterfaceAccount<'info, TokenAccount>,
 
-    /// The Token-2022 Active Pass Mint
-    #[account(mut)]
+    /// The Shared Token-2022 Active Pass Mint
+    #[account(
+        mut,
+        address = config.pass_mint,
+        seeds = [b"pass_mint"],
+        bump,
+    )]
     pub pass_mint: InterfaceAccount<'info, Mint>,
 
     /// The user's Active Pass token account
@@ -48,95 +62,127 @@ pub struct StakeAndSubscribe<'info> {
     pub system_program: Program<'info, System>,
     
     /// CHECK: The official Solana Mobile $SKR Staking Program
-    #[account(address = SKR_STAKING_PROGRAM)]
+    #[account(address = crate::SKR_STAKING_PROGRAM)]
     pub skr_staking_program: AccountInfo<'info>,
 
-    /// CHECK: The official $SKR Staking Vault
-    #[account(mut, address = SKR_STAKING_VAULT)]
+    /// CHECK: The official $SKR Staking Config
+    pub skr_stake_config: AccountInfo<'info>,
+
+    /// CHECK: The official $SKR Guardian Pool
+    #[account(mut)]
+    pub guardian_pool: AccountInfo<'info>,
+
+    /// CHECK: The User's Stake account within the official SKR protocol
+    #[account(mut)]
+    pub official_user_stake: AccountInfo<'info>,
+
+    /// CHECK: The official $SKR Staking Vault (Token Account)
+    #[account(mut, address = crate::SKR_STAKING_VAULT)]
     pub skr_staking_vault: AccountInfo<'info>,
 }
 
-pub fn stake_and_subscribe(ctx: Context<StakeAndSubscribe>, amount: u64) -> Result<()> {
-    // 1. Set up Vault State
-    let vault = &mut ctx.accounts.user_vault;
-    vault.dapp = ctx.accounts.dapp.key();
-    vault.user = ctx.accounts.user.key();
-    vault.staked_amount = amount;
-    vault.active_pass_mint = ctx.accounts.pass_mint.key();
-    vault.staked_at = Clock::get()?.unix_timestamp;
-    vault.is_cooling_down = false;
-    vault.cooldown_start_time = 0;
-    vault.bump = ctx.bumps.user_vault;
+pub fn handler(ctx: Context<StakeAndSubscribe>, amount: u64, _dapp_id: [u8; 32]) -> Result<()> {
+    let clock = Clock::get()?;
+    let config = &ctx.accounts.config;
+    
+    // 1. Initialize Subscription
+    let subscription = &mut ctx.accounts.subscription;
+    if subscription.user == Pubkey::default() {
+        subscription.user = ctx.accounts.user.key();
+        subscription.dapp = ctx.accounts.dapp.key();
+        subscription.yield_claimed = 0;
+        subscription.last_yield_index = config.global_yield_index;
+        subscription.bump = ctx.bumps.subscription;
+    }
 
-    let dapp_key = ctx.accounts.dapp.key();
+    // 2. Set up Vault State
+    let vault = &mut ctx.accounts.user_vault;
+    if vault.user == Pubkey::default() {
+        vault.user = ctx.accounts.user.key();
+        vault.staked_amount = amount;
+        vault.active_pass_mint = ctx.accounts.pass_mint.key();
+        vault.staked_at = clock.unix_timestamp;
+        vault.last_harvest_at = clock.unix_timestamp;
+        vault.cumulative_yield_harvested = 0;
+        vault.is_cooling_down = false;
+        vault.cooldown_start_time = 0;
+        vault.bump = ctx.bumps.user_vault;
+    } else if amount > 0 {
+        let total_stake = vault.staked_amount.checked_add(amount).unwrap();
+        require!(total_stake >= config.min_stake_amount, ErrorCode::InsufficientStake);
+        vault.staked_amount = total_stake;
+    }
+
     let user_key = ctx.accounts.user.key();
     let vault_seeds: &[&[u8]] = &[
         b"vault",
-        dapp_key.as_ref(),
         user_key.as_ref(),
         &[vault.bump],
     ];
-    let signer_seeds = &[vault_seeds];
+    let vault_signer_seeds = &[vault_seeds];
 
-    // 2. Transfer $SKR from User to Vault
-    let transfer_cpi_accounts = TransferChecked {
-        from: ctx.accounts.user_skr_account.to_account_info(),
-        mint: ctx.accounts.skr_mint.to_account_info(),
-        to: ctx.accounts.vault_skr_account.to_account_info(),
-        authority: ctx.accounts.user.to_account_info(),
-    };
-    let transfer_cpi_ctx = CpiContext::new(
-        ctx.accounts.token_program.to_account_info(),
-        transfer_cpi_accounts,
-    );
-    transfer_checked(transfer_cpi_ctx, amount, ctx.accounts.skr_mint.decimals)?;
+    let config_seeds: &[&[u8]] = &[
+        b"global_config",
+        &[config.bump],
+    ];
+    let config_signer_seeds = &[config_seeds];
 
-    // 3. Delegate to the Official $SKR Staking Program via CPI
-    msg!("Executing CPI to official $SKR Staking Protocol...");
-    
-    // We use the UserVault PDA as the 'user' (authority) in the staking program
-    let stake_ix = crate::seeker_cpi::delegate_stake_ix(
-        ctx.accounts.user_vault.key(), // user_stake (using vault key as placeholder)
-        ctx.accounts.skr_staking_vault.key(), // stake_config
-        ctx.accounts.skr_staking_vault.key(), // guardian_pool
-        ctx.accounts.user.key(), // payer
-        ctx.accounts.user_vault.key(), // user (authority)
-        ctx.accounts.vault_skr_account.key(), // user_token_account
-        ctx.accounts.skr_staking_vault.key(), // stake_vault
-        ctx.accounts.skr_mint.key(),
-        ctx.accounts.token_program.key(),
-        ctx.accounts.system_program.key(),
-        ctx.accounts.skr_staking_program.key(), // event_authority placeholder
-        amount,
-    );
+    // 3. Transfer $SKR from User to Vault
+    if amount > 0 {
+        let transfer_cpi_accounts = TransferChecked {
+            from: ctx.accounts.user_skr_account.to_account_info(),
+            mint: ctx.accounts.skr_mint.to_account_info(),
+            to: ctx.accounts.vault_skr_account.to_account_info(),
+            authority: ctx.accounts.user.to_account_info(),
+        };
+        transfer_checked(
+            CpiContext::new(ctx.accounts.token_program.to_account_info(), transfer_cpi_accounts),
+            amount,
+            ctx.accounts.skr_mint.decimals
+        )?;
 
-    anchor_lang::solana_program::program::invoke_signed(
-        &stake_ix,
-        &[
-            ctx.accounts.user_vault.to_account_info(),
-            ctx.accounts.skr_staking_vault.to_account_info(),
-            ctx.accounts.user.to_account_info(),
-            ctx.accounts.vault_skr_account.to_account_info(),
-            ctx.accounts.skr_mint.to_account_info(),
-            ctx.accounts.skr_staking_program.to_account_info(),
-            ctx.accounts.token_program.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
-        ],
-        signer_seeds
-    )?;
+        // 4. Delegate to the Official $SKR Staking Program
+        let event_authority = crate::seeker_cpi::get_event_authority(&ctx.accounts.skr_staking_program.key());
 
-    // 4. Mint the Active Pass (Token-2022)
-    let mint_cpi_accounts = MintTo {
-        mint: ctx.accounts.pass_mint.to_account_info(),
-        to: ctx.accounts.user_pass_account.to_account_info(),
-        authority: ctx.accounts.user_vault.to_account_info(), // Vault needs to be mint authority
-    };
-    let mint_cpi_ctx = CpiContext::new_with_signer(
-        ctx.accounts.token_program.to_account_info(), 
-        mint_cpi_accounts, 
-        signer_seeds
-    );
-    mint_to(mint_cpi_ctx, 1)?; // Mint 1 non-fungible Active Pass
+        let stake_ix = crate::seeker_cpi::delegate_stake_ix(
+            ctx.accounts.official_user_stake.key(),
+            ctx.accounts.skr_stake_config.key(),
+            ctx.accounts.guardian_pool.key(),
+            vault.key(), // Authority in SKR is our Vault
+            ctx.accounts.skr_staking_vault.key(),
+            ctx.accounts.skr_mint.key(),
+            event_authority,
+            ctx.accounts.skr_staking_program.key(),
+            amount,
+        );
+
+        anchor_lang::solana_program::program::invoke_signed(
+            &stake_ix,
+            &[
+                ctx.accounts.official_user_stake.to_account_info(),
+                ctx.accounts.skr_stake_config.to_account_info(),
+                ctx.accounts.guardian_pool.to_account_info(),
+                vault.to_account_info(),
+                ctx.accounts.skr_staking_vault.to_account_info(),
+                ctx.accounts.skr_mint.to_account_info(),
+                ctx.accounts.skr_staking_program.to_account_info(),
+            ],
+            vault_signer_seeds
+        )?;
+    }
+
+    // 5. Mint Active Pass
+    if ctx.accounts.user_pass_account.amount == 0 {
+        let mint_cpi_accounts = MintTo {
+            mint: ctx.accounts.pass_mint.to_account_info(),
+            to: ctx.accounts.user_pass_account.to_account_info(),
+            authority: ctx.accounts.config.to_account_info(),
+        };
+        mint_to(
+            CpiContext::new_with_signer(ctx.accounts.token_program.to_account_info(), mint_cpi_accounts, config_signer_seeds),
+            1
+        )?;
+    }
 
     Ok(())
 }
