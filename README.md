@@ -1,55 +1,75 @@
 # ⚡ S2S-Kit: Sovereign Stake-to-Subscribe
-### *Monetize your Seeker dApp without charging the user a single cent.*
+### *Hardened Liquidity Monetization for the Seeker dApp Ecosystem.*
 
-S2S-Kit is a production-grade, multi-tenant monetization framework for the **Solana Mobile (Seeker)** ecosystem. It allows users to stake $SKR once into a shared vault to unlock premium access across an entire network of dApps.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/badge/Anchor-0.32.1-blue.svg)](https://coral-xyz.github.io/anchor/)
+[![Platform](https://img.shields.io/badge/Solana-Seeker-green.svg)](https://solanamobile.com/)
 
-## 🌟 The Vision: "Stake Once, Subscribe Everywhere"
-Users hate monthly credit card charges. Developers hate high platform fees. S2S-Kit solves both by routing **Liquid Staking Yield** directly to developers while the user retains 100% of their principal.
+S2S-Kit is a production-grade, hardened monetization framework built specifically for **Solana Mobile (Seeker)**. By leveraging the **SKR Liquid Staking Protocol**, S2S allows developers to capture sustainable yield while users retain 100% principal control. **No monthly charges. No friction. Just sovereign code.**
 
-### Key Primitives
-*   **Shared Vault Architecture**: One global vault per user. Zero redundant staking.
-*   **Aether Index (72h Grace Period)**: Instant premium access the moment a user stakes, bypassing the 48h reward epoch.
-*   **Precision Yield Routing**: Mathematically fair pro-rata yield distribution across infinite dApps via a 1e12 scaled index.
-*   **Token-2022 Active Pass**: A non-transferable on-chain proof of subscription, verifiable by any middleware.
+---
 
-## 🛠️ The Stack
-*   **Program**: Anchor 0.32 + Token-2022 (Non-Transferable, MetadataPointer).
-*   **Middleware**: High-speed Fastify indexer with Borsh account decoding.
-*   **SDK**: React hooks for 1-line integration.
+## 🌟 The Vision: "Monetize Like a Sovereign"
+Traditional subscription models are dying. Credit card churn, high platform fees, and custodial risks are relics of the past. S2S-Kit establishes a new primitive: **Yield-as-a-Service (YaaS)**.
 
-## 🚀 Getting Started
+### 🛡️ Hardened Architectural Primitives
+*   **Zero-Config SDK**: The React SDK automatically resolves complex **17-account mappings** across the S2S and SKR protocols, providing a 1-line integration experience.
+*   **Anchor 0.32 & Token-2022**: Built on the cutting edge of Solana infrastructure. Utilizes non-transferable mints, metadata pointers, and strictly typed account structs.
+*   **1e12 Scaling Index**: Pro-rata yield distribution across infinite dApps via a high-precision, on-chain mathematical engine.
+*   **48h Hardened Cooldown**: Enforces protocol integrity while maintaining user access during the unstaking grace period (Seeker UX Standard).
+
+---
+
+## 🚀 Quick Start: The One-Command Integration
+
+### 1. Initialize Infrastructure
+Scaffold your project and initialize the protocol on-chain in seconds.
 ```bash
-npx @s2s-kit/cli init
+# Install the toolkit
+npm install -g @s2s-kit/cli
+
+# Initialize local project
+s2s init
+
+# Configure protocol on-chain (Devnet/Mainnet)
+s2s init-protocol --treasury <YOUR_TREASURY_PUBKEY> --fee 500
 ```
 
-### Integration Example
+### 2. Plug into the React SDK
+Wrap your application in the `S2SProvider` and utilize the `useS2S` hook to gate premium features.
 ```tsx
-import { useSubscription } from '@s2s-kit/react';
+import { S2SProvider, useS2S } from '@s2s-kit/react';
 
-const PremiumFeature = () => {
-  const { hasAccess, status } = useSubscription();
+const PremiumApp = () => {
+  const { status, stakeAndSubscribe } = useS2S();
 
-  if (!hasAccess) return <Paywall />;
-  
-  return (
-    <div>
-      {status === 'GRACE_PERIOD' && <GracePeriodBanner />}
-      <PremiumContent />
-    </div>
-  );
+  if (status === 'UNSUBSCRIBED') {
+    return <button onClick={() => stakeAndSubscribe(100, "dapp_id")}>Unlock Premium</button>;
+  }
+
+  return <PremiumContent />;
 };
 ```
 
-## 🛡️ Security & Auditability
-S2S-Kit is designed for trustless, sovereign operation. 
-*   **Verifiable Builds**: All program deployments use `solana-verify` to ensure the on-chain bytecode matches the public source code.
-*   **Deterministic PDAs**: Zero "admin" keys. All yield routing is governed by strict on-chain math and immutable seeds.
-*   **Non-Custodial**: Users retain 100% principal control via the underlying SKR Staking Protocol.
+---
 
-## 🇦🇺 Superteam Australia Grant
-Applied for the **Solana Foundation Australia Grant ($10k)**.
-- **Status**: Review Pending.
-- **Vision**: Establish S2S as the native monetization standard for the 2026 Seeker dApp ecosystem.
+## 🏗️ Architecture
+1.  **Non-Custodial Stake**: User tokens are delegated via CPI to official high-yield Guardians.
+2.  **Active Pass Issuance**: A Token-2022 Active Pass is minted to the user's wallet as an immutable, non-transferable proof of subscription.
+3.  **Real-Time Authorization**: The Aether Indexer detects the stake and grants instant access, bypassing reward epoch delays.
+4.  **Sovereign Yield Routing**: Yield is harvested every 48h, routing protocol fees and dApp credits via the shared on-chain index.
 
 ---
-*Built for the Seeker. Powered by Solana.*
+
+## 🛡️ Security & Verifiability
+S2S-Kit is built for high-stakes enterprise safety.
+*   **Deterministic PDAs**: Zero "admin" keys. All routing is governed by immutable seeds and math.
+*   **Verifiable Builds**: All program deployments are compatible with `solana-verify` for public audibility.
+*   **Auditability**: Every instruction entry point follows the `handler()` pattern for maximum namespace isolation.
+
+## 🇦🇺 Superteam Australia Grant
+Applied for the **Solana Foundation Australia Grant ($10k)** to establish S2S as the native monetization standard for the 2026 Seeker ecosystem. 
+- **Status**: Hardening Sprint Complete. Review Pending.
+
+---
+*Built for the Seeker. Powered by Solana. Architected by Rykiri.*
