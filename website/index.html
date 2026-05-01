@@ -3,65 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S2S | Stake-to-Subscribe Infrastructure</title>
+    <title>S2S | Sovereign Stake-to-Subscribe Infrastructure</title>
+    <meta name="description" content="Monetize your Solana Seeker dApp without charging users. S2S-Kit lets users stake $SKR once to unlock premium access everywhere.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="grid-overlay"></div>
     
     <nav>
-        <div class="logo">S2S<span>.kit</span></div>
+        <div class="logo">S2S<span>.KIT</span></div>
         <div class="nav-links">
-            <a href="#features">Features</a>
-            <a href="#integration">Integration</a>
-            <a href="https://github.com/RYthaGOD/S2S-kit" target="_blank" class="gh-link">GitHub</a>
+            <a href="#features">Protocols</a>
+            <a href="#integration">SDK</a>
+            <a href="https://github.com/RYthaGOD/S2S-kit" target="_blank">Repository</a>
         </div>
     </nav>
 
     <main>
-        <section class="hero">
-            <div class="badge">Seeker Optimized</div>
-            <h1>Revenue without <span>Spending.</span></h1>
-            <p>The ultimate monetization layer for Solana Mobile. Users stake $SKR, you capture yield. Total cost to user: 0.</p>
-            
-            <div class="hero-actions">
-                <button class="btn-primary" onclick="scrollToIntegration()">Get Started</button>
-                <div class="terminal-cmd">npx s2s-cli init</div>
-            </div>
-        </section>
-
-        <section class="demo-section">
-            <div class="demo-card">
-                <div class="card-header">Live SDK Demo</div>
-                <div id="demo-button-container">
-                    <!-- Button logic injected via JS -->
+        <div class="hero-container">
+            <section class="hero">
+                <div class="badge">Seeker v2.0 Protocol</div>
+                <h1>Monetize <span>Without Friction.</span></h1>
+                <p>The ultimate yield-routing layer for the Solana Mobile economy. Users stake once, keep their principal, and unlock your entire ecosystem.</p>
+                
+                <div class="hero-actions">
+                    <button class="btn-primary" onclick="scrollToIntegration()">Initialize</button>
+                    <div class="terminal-cmd">npx @s2s-kit/cli init</div>
                 </div>
-                <div class="status-msg" id="status-text">Ready to Stake</div>
-            </div>
-        </section>
+            </section>
+
+            <section class="demo-section">
+                <div class="hero-visual">
+                    <img src="assets/hero.png" alt="S2S Visual Architecture">
+                </div>
+                <div class="demo-card">
+                    <div class="card-header">S2S Verification Demo</div>
+                    <div id="demo-button-container">
+                        <!-- Button logic injected via JS -->
+                    </div>
+                    <div class="status-msg" id="status-text">Connection Pending</div>
+                </div>
+            </section>
+        </div>
 
         <section id="integration" class="integration">
-            <h2>Integration in <span>Seconds.</span></h2>
+            <h2>Clean <span>Integration.</span></h2>
             <div class="code-block">
-                <pre><code><span class="comment">// 1. Install</span>
-npm i @rykiri/stake-to-subscribe
+                <pre><code><span class="comment">// 1. Bootstrapping the S2S context</span>
+import { S2SProvider } from '@s2s-kit/react';
 
-<span class="comment">// 2. Drop in</span>
-&lt;SubscribeButton 
-  amount={100}
-  onStake={handleStake}
-/&gt;</code></pre>
+<span class="comment">// 2. Implement the Paywall hook</span>
+const { hasAccess } = useSubscription();
+
+if (!hasAccess) return &lt;Gatekeeper /&gt;;</code></pre>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 S2S Infrastructure. Built by Rykiri.</p>
+        <div class="logo">S2S<span>.KIT</span></div>
+        <div class="footer-copy">© 2026 S2S INFRASTRUCTURE | BUILT FOR THE SEEKER</div>
     </footer>
 
     <script src="main.js"></script>
+    <script>
+        function scrollToIntegration() {
+            document.getElementById('integration').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>

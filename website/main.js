@@ -9,21 +9,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = document.createElement('button');
         btn.className = 's2s-btn-demo';
         
+        // Add entrance animation
+        btn.style.opacity = '0';
+        btn.style.transform = 'translateY(10px)';
+        
         if (state === 'unsubscribed') {
-            btn.innerText = 'Stake 100 $SKR to Subscribe';
-            statusText.innerText = 'Ready to Stake';
+            btn.innerText = 'Stake 100 $SKR';
+            statusText.innerText = 'Ready to Initialize';
         } else if (state === 'subscribed') {
-            btn.innerText = 'Subscribed';
+            btn.innerText = 'Access Granted';
             btn.classList.add('active');
-            statusText.innerText = 'Active Access | Earning Yield';
+            statusText.innerText = 'Active Index: 1.042e12';
         } else if (state === 'unstaking') {
-            btn.innerText = 'Unlocking: 47h 59m 59s';
+            btn.innerText = 'Unlocking Tokens';
             btn.style.borderColor = '#FF3366';
             btn.style.color = '#FF3366';
-            statusText.innerText = 'Grace Period Active';
+            statusText.innerText = 'Grace Period: 47:59:58';
         }
 
         btn.onclick = () => {
+            // Simple state machine for the demo
             if (state === 'unsubscribed') {
                 state = 'subscribed';
             } else if (state === 'subscribed') {
@@ -35,11 +40,14 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         container.appendChild(btn);
+        
+        // Trigger animation
+        setTimeout(() => {
+            btn.style.transition = '0.4s cubic-bezier(0.23, 1, 0.32, 1)';
+            btn.style.opacity = '1';
+            btn.style.transform = 'translateY(0)';
+        }, 10);
     };
 
     renderButton();
 });
-
-function scrollToIntegration() {
-    document.getElementById('integration').scrollIntoView({ behavior: 'smooth' });
-}

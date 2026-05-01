@@ -1,0 +1,167 @@
+{
+  "address": "StKToSuBSCriBe11111111111111111111111111111",
+  "metadata": {
+    "name": "stake_to_subscribe",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Hardened Stake-to-Subscribe Liquid Staking Protocol"
+  },
+  "instructions": [
+    {
+      "name": "claim_subscription_yield",
+      "discriminator": [11, 246, 32, 179, 137, 30, 201, 16],
+      "accounts": [
+        { "name": "cranker", "writable": true, "signer": true },
+        { "name": "config" },
+        { "name": "dapp", "writable": true },
+        { "name": "user_vault", "writable": true },
+        { "name": "subscription", "writable": true },
+        { "name": "skr_mint" },
+        { "name": "vault_skr_account", "writable": true },
+        { "name": "treasury_skr_account", "writable": true },
+        { "name": "token_program" }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim_yield",
+      "discriminator": [203, 107, 43, 219, 172, 70, 227, 219],
+      "accounts": [
+        { "name": "cranker", "writable": true, "signer": true },
+        { "name": "config" },
+        { "name": "dapp", "writable": true },
+        { "name": "user_vault", "writable": true },
+        { "name": "subscription", "writable": true },
+        { "name": "skr_staking_program" },
+        { "name": "skr_stake_config" },
+        { "name": "guardian_pool", "writable": true },
+        { "name": "official_user_stake", "writable": true },
+        { "name": "skr_staking_vault", "writable": true },
+        { "name": "skr_mint" },
+        { "name": "vault_skr_account", "writable": true },
+        { "name": "token_program" }
+      ],
+      "args": []
+    },
+    {
+      "name": "distribute_yield",
+      "discriminator": [65, 237, 107, 170, 39, 14, 52, 126],
+      "accounts": [
+        { "name": "cranker", "writable": true, "signer": true },
+        { "name": "config" },
+        { "name": "user_vault", "writable": true },
+        { "name": "skr_staking_program" },
+        { "name": "skr_stake_config" },
+        { "name": "skr_staking_vault", "writable": true },
+        { "name": "official_user_stake", "writable": true },
+        { "name": "skr_mint" },
+        { "name": "vault_skr_account", "writable": true },
+        { "name": "protocol_skr_account", "writable": true },
+        { "name": "token_program" }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_dapp",
+      "discriminator": [121, 10, 65, 114, 18, 127, 24, 76],
+      "accounts": [
+        { "name": "authority", "writable": true, "signer": true },
+        { "name": "config", "writable": true },
+        { "name": "dapp", "writable": true },
+        { "name": "system_program" }
+      ],
+      "args": [
+        { "name": "dapp_id", "type": { "array": ["u8", 32] } },
+        { "name": "treasury", "type": "pubkey" },
+        { "name": "guardian_vote_account", "type": "pubkey" }
+      ]
+    },
+    {
+      "name": "initialize_protocol",
+      "discriminator": [120, 169, 119, 219, 222, 110, 192, 164],
+      "accounts": [
+        { "name": "config", "writable": true },
+        { "name": "pass_mint", "writable": true },
+        { "name": "authority", "writable": true, "signer": true },
+        { "name": "token_program" },
+        { "name": "system_program" }
+      ],
+      "args": [
+        { "name": "protocol_fee_bps", "type": "u16" },
+        { "name": "treasury", "type": "pubkey" },
+        { "name": "default_guardian_pool", "type": "pubkey" },
+        { "name": "min_stake_amount", "type": "u64" }
+      ]
+    },
+    {
+      "name": "initiate_unsubscribe",
+      "discriminator": [193, 226, 44, 255, 62, 118, 59, 220],
+      "accounts": [
+        { "name": "user", "writable": true, "signer": true },
+        { "name": "user_vault", "writable": true },
+        { "name": "skr_staking_program" },
+        { "name": "skr_stake_config" },
+        { "name": "guardian_pool", "writable": true },
+        { "name": "official_user_stake", "writable": true },
+        { "name": "skr_staking_vault", "writable": true },
+        { "name": "skr_mint" },
+        { "name": "token_program" }
+      ],
+      "args": []
+    },
+    {
+      "name": "stake_and_subscribe",
+      "discriminator": [120, 68, 179, 219, 143, 44, 182, 126],
+      "accounts": [
+        { "name": "user", "writable": true, "signer": true },
+        { "name": "config" },
+        { "name": "dapp", "writable": true },
+        { "name": "user_vault", "writable": true },
+        { "name": "subscription", "writable": true },
+        { "name": "skr_mint" },
+        { "name": "user_skr_account", "writable": true },
+        { "name": "vault_skr_account", "writable": true },
+        { "name": "pass_mint", "writable": true },
+        { "name": "user_pass_account", "writable": true },
+        { "name": "token_program" },
+        { "name": "system_program" },
+        { "name": "skr_staking_program" },
+        { "name": "skr_stake_config" },
+        { "name": "guardian_pool", "writable": true },
+        { "name": "official_user_stake", "writable": true },
+        { "name": "skr_staking_vault", "writable": true }
+      ],
+      "args": [
+        { "name": "amount", "type": "u64" },
+        { "name": "dapp_id", "type": { "array": ["u8", 32] } }
+      ]
+    },
+    {
+      "name": "withdraw_stake",
+      "discriminator": [153, 8, 22, 138, 105, 176, 87, 66],
+      "accounts": [
+        { "name": "user", "writable": true, "signer": true },
+        { "name": "config" },
+        { "name": "user_vault", "writable": true },
+        { "name": "pass_mint", "writable": true },
+        { "name": "user_pass_account", "writable": true },
+        { "name": "user_skr_account", "writable": true },
+        { "name": "vault_skr_account", "writable": true },
+        { "name": "skr_mint" },
+        { "name": "token_program" },
+        { "name": "system_program" },
+        { "name": "skr_staking_program" },
+        { "name": "skr_stake_config" },
+        { "name": "skr_staking_vault", "writable": true },
+        { "name": "official_user_stake", "writable": true }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    { "name": "DappRegistry" },
+    { "name": "GlobalConfig" },
+    { "name": "Subscription" },
+    { "name": "UserVault" }
+  ]
+}

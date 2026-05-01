@@ -40,11 +40,16 @@ const PremiumFeature = () => {
 };
 ```
 
-## 🏗️ Architecture
-1.  **User Stakes $SKR**: Tokens are delegated to a protocol-selected high-yield Guardian.
-2.  **Active Pass Issued**: A Non-Transferable Token-2022 mint is sent to the user's wallet.
-3.  **Aether Index Syncs**: The middleware detects the stake and grants instant access.
-4.  **Yield Accrual**: Every 48h, yield is harvested, protocol fees are routed, and dApp treasuries are credited via the shared index.
+## 🛡️ Security & Auditability
+S2S-Kit is designed for trustless, sovereign operation. 
+*   **Verifiable Builds**: All program deployments use `solana-verify` to ensure the on-chain bytecode matches the public source code.
+*   **Deterministic PDAs**: Zero "admin" keys. All yield routing is governed by strict on-chain math and immutable seeds.
+*   **Non-Custodial**: Users retain 100% principal control via the underlying SKR Staking Protocol.
+
+## 🇦🇺 Superteam Australia Grant
+Applied for the **Solana Foundation Australia Grant ($10k)**.
+- **Status**: Review Pending.
+- **Vision**: Establish S2S as the native monetization standard for the 2026 Seeker dApp ecosystem.
 
 ---
 *Built for the Seeker. Powered by Solana.*

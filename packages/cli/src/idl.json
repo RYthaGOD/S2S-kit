@@ -1,0 +1,39 @@
+{
+  "address": "StKToSuBSCriBe11111111111111111111111111111",
+  "metadata": {
+    "name": "stake_to_subscribe",
+    "version": "0.1.0"
+  },
+  "instructions": [
+    {
+      "name": "initialize_protocol",
+      "accounts": [
+        { "name": "config", "writable": true },
+        { "name": "pass_mint", "writable": true },
+        { "name": "authority", "writable": true, "signer": true },
+        { "name": "token_program" },
+        { "name": "system_program" }
+      ],
+      "args": [
+        { "name": "protocol_fee_bps", "type": "u16" },
+        { "name": "treasury", "type": "pubkey" },
+        { "name": "default_guardian_pool", "type": "pubkey" },
+        { "name": "min_stake_amount", "type": "u64" }
+      ]
+    },
+    {
+      "name": "initialize_dapp",
+      "accounts": [
+        { "name": "authority", "writable": true, "signer": true },
+        { "name": "config", "writable": true },
+        { "name": "dapp", "writable": true },
+        { "name": "system_program" }
+      ],
+      "args": [
+        { "name": "dapp_id", "type": { "array": ["u8", 32] } },
+        { "name": "treasury", "type": "pubkey" },
+        { "name": "guardian_vote_account", "type": "pubkey" }
+      ]
+    }
+  ]
+}
