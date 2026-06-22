@@ -1,8 +1,9 @@
 [package]
 name = "stake_to_subscribe"
-version = "0.1.0"
-description = "Created with Anchor"
+version = "0.2.0"
+description = "S2S-Kit — non-custodial staking-yield routing on Solana"
 edition = "2021"
+license-file = "../../../LICENSE"
 
 [lib]
 crate-type = ["cdylib", "lib"]

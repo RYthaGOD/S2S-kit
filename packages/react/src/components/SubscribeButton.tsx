@@ -7,12 +7,14 @@ interface SubscribeButtonProps {
     dappId: string;
     walletAddress: string;
     amount: number;
+    /** Symbol of the LST being deposited (e.g. "jitoSOL"). */
+    tokenSymbol?: string;
     onStake: () => Promise<void>;
     onUnsubscribe: () => Promise<void>;
     onWithdraw: () => Promise<void>;
 }
 
-export const SubscribeButton: React.FC<SubscribeButtonProps> = ({ dappId, walletAddress, amount, onStake, onUnsubscribe, onWithdraw }) => {
+export const SubscribeButton: React.FC<SubscribeButtonProps> = ({ dappId, walletAddress, amount, tokenSymbol = 'LST', onStake, onUnsubscribe, onWithdraw }) => {
     const { status, cooldownEndsAt, isLoading } = useSubscriptionState(walletAddress, dappId);
     const [timeLeft, setTimeLeft] = useState<string>('');
 
@@ -50,7 +52,7 @@ export const SubscribeButton: React.FC<SubscribeButtonProps> = ({ dappId, wallet
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
                     whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                 >
-                    Stake {amount} $SKR to Subscribe
+                    Deposit {amount} {tokenSymbol} to Subscribe
                 </motion.button>
             )}
 
@@ -84,7 +86,7 @@ export const SubscribeButton: React.FC<SubscribeButtonProps> = ({ dappId, wallet
                     initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                     whileHover={{ scale: 1.05 }}
                 >
-                    Withdraw {amount} $SKR & Close Pass
+                    Withdraw {tokenSymbol} principal & Close Pass
                 </motion.button>
             )}
         </AnimatePresence>

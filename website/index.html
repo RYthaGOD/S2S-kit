@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S2S | Sovereign Stake-to-Subscribe Infrastructure</title>
-    <meta name="description" content="Monetize your Solana Seeker dApp without charging users. S2S-Kit lets users stake $SKR once to unlock premium access everywhere.">
+    <title>S2S | LST Subscription Vault Infrastructure</title>
+    <meta name="description" content="Monetize your Solana dApp without charging users. S2S-Kit lets users deposit a Liquid Staking Token once — they keep their principal, the staking yield pays for access.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,9 +25,9 @@
     <main>
         <div class="hero-container">
             <section class="hero">
-                <div class="badge">Seeker v2.0 Protocol</div>
+                <div class="badge">Solana LST Protocol</div>
                 <h1>Monetize <span>Without Friction.</span></h1>
-                <p>The ultimate yield-routing layer for the Solana Mobile economy. Users stake once, keep their principal, and unlock your entire ecosystem.</p>
+                <p>The yield-routing layer for the Solana economy. Users deposit a Liquid Staking Token once, keep their principal, and unlock your entire ecosystem.</p>
                 
                 <div class="hero-actions">
                     <button class="btn-primary" onclick="scrollToIntegration()">Initialize</button>
@@ -52,20 +52,20 @@
         <section id="integration" class="integration">
             <h2>Clean <span>Integration.</span></h2>
             <div class="code-block">
-                <pre><code><span class="comment">// 1. Bootstrapping the S2S context</span>
-import { S2SProvider } from '@s2s-kit/react';
+                <pre><code><span class="comment">// 1. Bootstrap the S2S context</span>
+import { S2SProvider, useS2S } from '@s2s-kit/react';
 
-<span class="comment">// 2. Implement the Paywall hook</span>
-const { hasAccess } = useSubscription();
+<span class="comment">// 2. Gate premium features on an active pass</span>
+const { status } = useS2S();
 
-if (!hasAccess) return &lt;Gatekeeper /&gt;;</code></pre>
+if (status !== 'ACTIVE') return &lt;Gatekeeper /&gt;;</code></pre>
             </div>
         </section>
     </main>
 
     <footer>
         <div class="logo">S2S<span>.KIT</span></div>
-        <div class="footer-copy">© 2026 S2S INFRASTRUCTURE | BUILT FOR THE SEEKER</div>
+        <div class="footer-copy">© 2026 S2S INFRASTRUCTURE | BUILT ON SOLANA</div>
     </footer>
 
     <script src="main.js"></script>

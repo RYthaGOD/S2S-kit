@@ -21,3 +21,6 @@ target/
 # OS
 .DS_Store
 Thumbs.db
+
+# excluded per request
+video/

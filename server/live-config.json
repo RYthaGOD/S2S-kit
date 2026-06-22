@@ -1,0 +1,14 @@
+{
+  "programId": "7EeAMD5jwS2Zi5GbwkiuqJvQMK4yDT2qTdMh5HrjatbD",
+  "rpc": "https://api.devnet.solana.com",
+  "demoLstMint": "23Xacy2F1EktLp4nBe2hcNuZ1e8QTnbEaHgxFecY6AFk",
+  "demoLstSymbol": "demoSOL",
+  "dappName": "s2s-live-demo",
+  "dappIdHex": "7332732d6c6976652d64656d6f00000000000000000000000000000000000000",
+  "dapp": "HWxkBiRgwoXdqGTiKEkZsg5Ko8z9Fs8jVaqvJ68AWDR5",
+  "passMint": "5rsy1xc8kvyBNEY5SpZSjWZmBSGYXkgtTFVRCqFVDvJ4",
+  "config": "FvW1Kq6hhog7gHoogKZVC8vpmjrXdWTdEqXGTFokWAhJ",
+  "treasury": "AFuSARP1KVUPL9AW22kq86QcgFiBgaDtrFyvPWSAk6wc",
+  "protocolTreasury": "B3dxVXWHwavY9K53gbPmz2nkKafVaBBSdswnppFuJQm6",
+  "dappTreasury": "B3dxVXWHwavY9K53gbPmz2nkKafVaBBSdswnppFuJQm6"
+}

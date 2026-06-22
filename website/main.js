@@ -14,17 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.style.transform = 'translateY(10px)';
         
         if (state === 'unsubscribed') {
-            btn.innerText = 'Stake 100 $SKR';
+            btn.innerText = 'Deposit 100 jitoSOL';
             statusText.innerText = 'Ready to Initialize';
         } else if (state === 'subscribed') {
             btn.innerText = 'Access Granted';
             btn.classList.add('active');
-            statusText.innerText = 'Active Index: 1.042e12';
+            statusText.innerText = 'jitoSOL rate: 1.0420';
         } else if (state === 'unstaking') {
-            btn.innerText = 'Unlocking Tokens';
+            btn.innerText = 'Unlocking Principal';
             btn.style.borderColor = '#FF3366';
             btn.style.color = '#FF3366';
-            statusText.innerText = 'Grace Period: 47:59:58';
+            statusText.innerText = 'Cooldown: 47:59:58';
         }
 
         btn.onclick = () => {

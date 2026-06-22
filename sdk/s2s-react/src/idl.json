@@ -1,168 +1,1464 @@
 {
-  "address": "StKToSuBSCriBe11111111111111111111111111111",
+  "address": "7EeAMD5jwS2Zi5GbwkiuqJvQMK4yDT2qTdMh5HrjatbD",
   "metadata": {
     "name": "stake_to_subscribe",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "spec": "0.1.0",
-    "description": "Hardened Stake-to-Subscribe Delegated Staking Protocol"
+    "description": "S2S-Kit — non-custodial staking-yield routing on Solana"
   },
   "instructions": [
     {
-      "name": "claim_subscription_yield",
-      "discriminator": [11, 246, 32, 179, 137, 30, 201, 16],
-      "accounts": [
-        { "name": "cranker", "writable": true, "signer": true },
-        { "name": "config" },
-        { "name": "dapp", "writable": true },
-        { "name": "user_vault", "writable": true },
-        { "name": "subscription", "writable": true },
-        { "name": "skr_mint" },
-        { "name": "vault_skr_account", "writable": true },
-        { "name": "treasury_skr_account", "writable": true },
-        { "name": "token_program" }
+      "name": "add_lst",
+      "docs": [
+        "Add an LST to the protocol allowlist. `rate_kind`: 0 = manual (test LSTs),",
+        "1 = SPL stake pool (trustless, rate read from `rate_source`)."
       ],
-      "args": []
+      "discriminator": [
+        224,
+        231,
+        28,
+        164,
+        108,
+        30,
+        89,
+        120
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lst_mint",
+          "docs": [
+            "The LST mint being allow-listed."
+          ]
+        },
+        {
+          "name": "lst_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lst_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "rate_kind",
+          "type": "u8"
+        },
+        {
+          "name": "initial_rate",
+          "type": "u128"
+        },
+        {
+          "name": "rate_source",
+          "type": "pubkey"
+        }
+      ]
     },
     {
-      "name": "claim_yield",
-      "discriminator": [203, 107, 43, 219, 172, 70, 227, 219],
-      "accounts": [
-        { "name": "cranker", "writable": true, "signer": true },
-        { "name": "config" },
-        { "name": "dapp", "writable": true },
-        { "name": "user_vault", "writable": true },
-        { "name": "subscription", "writable": true },
-        { "name": "skr_staking_program" },
-        { "name": "skr_stake_config" },
-        { "name": "guardian_pool", "writable": true },
-        { "name": "official_user_stake", "writable": true },
-        { "name": "skr_staking_vault", "writable": true },
-        { "name": "skr_mint" },
-        { "name": "vault_skr_account", "writable": true },
-        { "name": "token_program" }
+      "name": "deposit_and_subscribe",
+      "docs": [
+        "Deposit an allow-listed LST, subscribe to a dApp, and mint the Active Pass."
       ],
-      "args": []
+      "discriminator": [
+        83,
+        15,
+        105,
+        252,
+        52,
+        150,
+        236,
+        3
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "dapp",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  97,
+                  112,
+                  112
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "dapp_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lst_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lst_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lst_mint",
+          "docs": [
+            "The LST mint being deposited (must match the allow-listed LstConfig)."
+          ]
+        },
+        {
+          "name": "user_lst_account",
+          "docs": [
+            "Source: the user's LST token account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_lst_account",
+          "docs": [
+            "Escrow: the vault PDA's associated token account for this LST."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user_vault"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "lst_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "pass_mint",
+          "docs": [
+            "The shared non-transferable Active Pass mint (Token-2022)."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  115,
+                  115,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_pass_account",
+          "docs": [
+            "Auto-created if missing — devs no longer pre-create the pass ATA."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "account",
+                "path": "pass_token_program"
+              },
+              {
+                "kind": "account",
+                "path": "pass_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program that owns the LST (legacy SPL Token or Token-2022)."
+          ]
+        },
+        {
+          "name": "pass_token_program",
+          "docs": [
+            "Token-2022 program (owns the Active Pass mint)."
+          ]
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "dapp_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
     },
     {
-      "name": "distribute_yield",
-      "discriminator": [65, 237, 107, 170, 39, 14, 52, 126],
+      "name": "harvest_yield",
+      "docs": [
+        "Permissionless crank: skim LST appreciation since the last harvest, send the",
+        "protocol fee to the treasury and the remainder to the subscribed dApp, and",
+        "extend the subscriber's paid-through clock by the value routed."
+      ],
+      "discriminator": [
+        28,
+        200,
+        150,
+        200,
+        69,
+        56,
+        38,
+        133
+      ],
       "accounts": [
-        { "name": "cranker", "writable": true, "signer": true },
-        { "name": "config" },
-        { "name": "user_vault", "writable": true },
-        { "name": "skr_staking_program" },
-        { "name": "skr_stake_config" },
-        { "name": "skr_staking_vault", "writable": true },
-        { "name": "official_user_stake", "writable": true },
-        { "name": "skr_mint" },
-        { "name": "vault_skr_account", "writable": true },
-        { "name": "protocol_skr_account", "writable": true },
-        { "name": "token_program" }
+        {
+          "name": "cranker",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "dapp",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  97,
+                  112,
+                  112
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "dapp.dapp_id",
+                "account": "DappRegistry"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lst_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lst_config.mint",
+                "account": "LstConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user_vault.user",
+                "account": "UserVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lst_mint"
+        },
+        {
+          "name": "vault_lst_account",
+          "docs": [
+            "Vault escrow (source of the skim)."
+          ],
+          "writable": true
+        },
+        {
+          "name": "protocol_treasury_account",
+          "docs": [
+            "Protocol treasury's LST account (must be owned by config.treasury)."
+          ],
+          "writable": true
+        },
+        {
+          "name": "dapp_treasury_account",
+          "docs": [
+            "dApp treasury's LST account (must be owned by dapp.treasury)."
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        }
       ],
       "args": []
     },
     {
       "name": "initialize_dapp",
-      "discriminator": [121, 10, 65, 114, 18, 127, 24, 76],
+      "docs": [
+        "Register a dApp. `price_per_period`/`period_seconds` meter the subscription",
+        "(0 price = unmetered); `trial_seconds` is the free trial granted on subscribe."
+      ],
+      "discriminator": [
+        127,
+        102,
+        157,
+        218,
+        146,
+        241,
+        230,
+        0
+      ],
       "accounts": [
-        { "name": "authority", "writable": true, "signer": true },
-        { "name": "config", "writable": true },
-        { "name": "dapp", "writable": true },
-        { "name": "system_program" }
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "dapp",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  97,
+                  112,
+                  112
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "dapp_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
       ],
       "args": [
-        { "name": "dapp_id", "type": { "array": ["u8", 32] } },
-        { "name": "treasury", "type": "pubkey" },
-        { "name": "guardian_vote_account", "type": "pubkey" },
-        { "name": "min_stake_amount", "type": "u64" }
+        {
+          "name": "dapp_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "treasury",
+          "type": "pubkey"
+        },
+        {
+          "name": "min_stake_value",
+          "type": "u64"
+        },
+        {
+          "name": "price_per_period",
+          "type": "u64"
+        },
+        {
+          "name": "period_seconds",
+          "type": "i64"
+        },
+        {
+          "name": "trial_seconds",
+          "type": "i64"
+        }
       ]
     },
     {
       "name": "initialize_protocol",
-      "discriminator": [120, 169, 119, 219, 222, 110, 192, 164],
+      "docs": [
+        "One-time protocol setup. Creates the global config and the shared,",
+        "non-transferable Token-2022 Active Pass mint."
+      ],
+      "discriminator": [
+        188,
+        233,
+        252,
+        106,
+        134,
+        146,
+        202,
+        91
+      ],
       "accounts": [
-        { "name": "config", "writable": true },
-        { "name": "pass_mint", "writable": true },
-        { "name": "authority", "writable": true, "signer": true },
-        { "name": "token_program" },
-        { "name": "system_program" }
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "pass_mint",
+          "docs": [
+            "The shared Active Pass mint, created in the handler as a Token-2022 mint",
+            "with the NonTransferable extension so every pass is soulbound — it cannot",
+            "be sold or moved between wallets."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  115,
+                  115,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
       ],
       "args": [
-        { "name": "protocol_fee_bps", "type": "u16" },
-        { "name": "treasury", "type": "pubkey" },
-        { "name": "default_guardian_pool", "type": "pubkey" },
-        { "name": "min_stake_amount", "type": "u64" }
+        {
+          "name": "protocol_fee_bps",
+          "type": "u16"
+        },
+        {
+          "name": "treasury",
+          "type": "pubkey"
+        },
+        {
+          "name": "cooldown_seconds",
+          "type": "u64"
+        }
       ]
     },
     {
       "name": "initiate_unsubscribe",
-      "discriminator": [193, 226, 44, 255, 62, 118, 59, 220],
+      "docs": [
+        "Begin the withdrawal cooldown for the user's principal."
+      ],
+      "discriminator": [
+        22,
+        8,
+        189,
+        69,
+        127,
+        151,
+        157,
+        51
+      ],
       "accounts": [
-        { "name": "user", "writable": true, "signer": true },
-        { "name": "user_vault", "writable": true },
-        { "name": "skr_staking_program" },
-        { "name": "skr_stake_config" },
-        { "name": "guardian_pool", "writable": true },
-        { "name": "official_user_stake", "writable": true },
-        { "name": "skr_staking_vault", "writable": true },
-        { "name": "skr_mint" },
-        { "name": "token_program" }
+        {
+          "name": "user",
+          "signer": true
+        },
+        {
+          "name": "user_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        }
       ],
       "args": []
     },
     {
-      "name": "stake_and_subscribe",
-      "discriminator": [120, 68, 179, 219, 143, 44, 182, 126],
+      "name": "refresh_lst_rate",
+      "docs": [
+        "Permissionless trustless refresh of an SPL-stake-pool LST's rate, read from",
+        "the pool's total_lamports / pool_token_supply."
+      ],
+      "discriminator": [
+        46,
+        238,
+        120,
+        115,
+        122,
+        85,
+        21,
+        38
+      ],
       "accounts": [
-        { "name": "user", "writable": true, "signer": true },
-        { "name": "config" },
-        { "name": "dapp", "writable": true },
-        { "name": "user_vault", "writable": true },
-        { "name": "subscription", "writable": true },
-        { "name": "skr_mint" },
-        { "name": "user_skr_account", "writable": true },
-        { "name": "vault_skr_account", "writable": true },
-        { "name": "pass_mint", "writable": true },
-        { "name": "user_pass_account", "writable": true },
-        { "name": "token_program" },
-        { "name": "system_program" },
-        { "name": "skr_staking_program" },
-        { "name": "skr_stake_config" },
-        { "name": "guardian_pool", "writable": true },
-        { "name": "official_user_stake", "writable": true },
-        { "name": "skr_staking_vault", "writable": true }
+        {
+          "name": "lst_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lst_config.mint",
+                "account": "LstConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stake_pool",
+          "docs": [
+            "Stake Pool program. Validated below before any field is read."
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "update_lst_rate",
+      "docs": [
+        "Authority push of a manual LST's rate (test/fallback LSTs only)."
+      ],
+      "discriminator": [
+        238,
+        19,
+        149,
+        187,
+        13,
+        174,
+        20,
+        56
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lst_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lst_config.mint",
+                "account": "LstConfig"
+              }
+            ]
+          }
+        }
       ],
       "args": [
-        { "name": "amount", "type": "u64" },
-        { "name": "dapp_id", "type": { "array": ["u8", 32] } }
+        {
+          "name": "new_rate",
+          "type": "u128"
+        }
       ]
     },
     {
-      "name": "withdraw_stake",
-      "discriminator": [153, 8, 22, 138, 105, 176, 87, 66],
+      "name": "verify_access",
+      "docs": [
+        "Trustless access check (CPI-able): errors unless the vault is paid through now."
+      ],
+      "discriminator": [
+        198,
+        35,
+        119,
+        166,
+        140,
+        214,
+        241,
+        222
+      ],
       "accounts": [
-        { "name": "user", "writable": true, "signer": true },
-        { "name": "config" },
-        { "name": "user_vault", "writable": true },
-        { "name": "pass_mint", "writable": true },
-        { "name": "user_pass_account", "writable": true },
-        { "name": "user_skr_account", "writable": true },
-        { "name": "vault_skr_account", "writable": true },
-        { "name": "skr_mint" },
-        { "name": "token_program" },
-        { "name": "system_program" },
-        { "name": "skr_staking_program" },
-        { "name": "skr_stake_config" },
-        { "name": "skr_staking_vault", "writable": true },
-        { "name": "official_user_stake", "writable": true }
+        {
+          "name": "user_vault",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user_vault.user",
+                "account": "UserVault"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "withdraw",
+      "docs": [
+        "After cooldown: return the user's LST principal, burn the pass, close the vault."
+      ],
+      "discriminator": [
+        183,
+        18,
+        70,
+        156,
+        148,
+        109,
+        161,
+        34
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lst_mint"
+        },
+        {
+          "name": "vault_lst_account",
+          "writable": true
+        },
+        {
+          "name": "user_lst_account",
+          "writable": true
+        },
+        {
+          "name": "pass_mint",
+          "docs": [
+            "The shared non-transferable Active Pass mint (Token-2022)."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  115,
+                  115,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_pass_account",
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "pass_token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
       ],
       "args": []
     }
   ],
   "accounts": [
-    { "name": "DappRegistry" },
-    { "name": "GlobalConfig" },
-    { "name": "Subscription" },
-    { "name": "UserVault" }
+    {
+      "name": "DappRegistry",
+      "discriminator": [
+        132,
+        67,
+        67,
+        106,
+        68,
+        179,
+        175,
+        46
+      ]
+    },
+    {
+      "name": "GlobalConfig",
+      "discriminator": [
+        149,
+        8,
+        156,
+        202,
+        160,
+        252,
+        176,
+        217
+      ]
+    },
+    {
+      "name": "LstConfig",
+      "discriminator": [
+        159,
+        89,
+        247,
+        194,
+        236,
+        216,
+        70,
+        209
+      ]
+    },
+    {
+      "name": "UserVault",
+      "discriminator": [
+        23,
+        76,
+        96,
+        159,
+        210,
+        10,
+        5,
+        22
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized: only the protocol authority can perform this action"
+    },
+    {
+      "code": 6001,
+      "name": "InsufficientStake",
+      "msg": "Insufficient principal value: below the dApp's minimum required"
+    },
+    {
+      "code": 6002,
+      "name": "MathOverflow",
+      "msg": "Math overflow: calculation resulted in overflow"
+    },
+    {
+      "code": 6003,
+      "name": "LstNotEnabled",
+      "msg": "This LST is not enabled in the protocol allowlist"
+    },
+    {
+      "code": 6004,
+      "name": "LstMintMismatch",
+      "msg": "LST mint does not match the vault's existing LST"
+    },
+    {
+      "code": 6005,
+      "name": "DappMismatch",
+      "msg": "dApp does not match the vault's subscribed dApp"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidRate",
+      "msg": "Invalid exchange rate"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidFee",
+      "msg": "Invalid protocol fee (must be <= 10000 bps)"
+    },
+    {
+      "code": 6008,
+      "name": "NotInCooldown",
+      "msg": "Vault is not in cooldown mode"
+    },
+    {
+      "code": 6009,
+      "name": "CooldownNotFinished",
+      "msg": "Cooldown period has not finished yet"
+    },
+    {
+      "code": 6010,
+      "name": "RateKindMismatch",
+      "msg": "Wrong rate kind for this instruction (manual vs stake-pool)"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidRateSource",
+      "msg": "Invalid rate source: not the LST's registered stake pool"
+    },
+    {
+      "code": 6012,
+      "name": "AccessExpired",
+      "msg": "Access has expired: the subscription is not paid through the current time"
+    }
+  ],
+  "types": [
+    {
+      "name": "DappRegistry",
+      "docs": [
+        "A registered dApp that receives the user-facing share of harvested yield.",
+        "(PDA: [b\"dapp\", dapp_id])."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "dapp_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury",
+            "docs": [
+              "Owner of the dApp treasury token accounts (yield is paid to its ATA)."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "min_stake_value",
+            "docs": [
+              "Minimum SOL-denominated principal value required to hold this dApp's pass."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "price_per_period",
+            "docs": [
+              "Subscription price in SOL-value lamports per `period_seconds`. 0 = unmetered",
+              "(access lasts as long as the vault is open)."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "period_seconds",
+            "type": "i64"
+          },
+          {
+            "name": "trial_seconds",
+            "docs": [
+              "Free-trial granted on first subscribe, in seconds (instant access while yield warms up)."
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GlobalConfig",
+      "docs": [
+        "Protocol-wide configuration. One per deployment (PDA: [b\"global_config\"])."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_fee_bps",
+            "docs": [
+              "Protocol's share of harvested yield, in basis points (e.g. 300 = 3%)."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "treasury",
+            "docs": [
+              "Owner of the protocol treasury token accounts. Payouts are sent to the",
+              "associated token account of this owner for the relevant LST mint."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "pass_mint",
+            "docs": [
+              "The shared Token-2022 (non-transferable) Active Pass mint."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "cooldown_seconds",
+            "docs": [
+              "Seconds a vault must cool down before principal can be withdrawn."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_dapps",
+            "type": "u64"
+          },
+          {
+            "name": "total_lsts",
+            "type": "u16"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LstConfig",
+      "docs": [
+        "An accepted Liquid Staking Token. One per allow-listed mint (PDA: [b\"lst\", mint]).",
+        "",
+        "`rate` is underlying-lamports (SOL) per 1 LST base unit, scaled by `RATE_PRECISION`.",
+        "For `RATE_KIND_SPL_STAKE_POOL`, `refresh_lst_rate` derives it on-chain from the pool's",
+        "`total_lamports / pool_token_supply` (trustless). `RATE_KIND_MANUAL` is for test LSTs",
+        "with no real pool and is only writable by the protocol authority."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "rate",
+            "type": "u128"
+          },
+          {
+            "name": "rate_kind",
+            "type": "u8"
+          },
+          {
+            "name": "rate_source",
+            "docs": [
+              "For SPL stake-pool LSTs: the StakePool state account the rate is read from."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "last_rate_update",
+            "type": "i64"
+          },
+          {
+            "name": "enabled",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserVault",
+      "docs": [
+        "A user's deposit position. One per user (PDA: [b\"vault\", user]).",
+        "",
+        "The vault escrows a single LST. The user's *principal value* (denominated in",
+        "the LST's underlying, SOL) is preserved across harvests: as the LST rate rises",
+        "the vault holds more value than the principal, and the surplus LST is skimmed",
+        "as yield. On withdrawal the user receives the LST still held by the vault,",
+        "which is worth their original principal value at the current rate."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "lst_mint",
+            "docs": [
+              "The LST mint this vault holds (set on first deposit; immutable until withdraw)."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "dapp",
+            "docs": [
+              "The dApp this position subscribes to (yield recipient)."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "deposited_lst",
+            "docs": [
+              "LST base units currently escrowed. Decreases as yield is skimmed."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "principal_value",
+            "docs": [
+              "SOL-lamport principal value to preserve. target_lst = principal_value * 1e12 / rate."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "cumulative_yield_skimmed",
+            "docs": [
+              "Lifetime LST skimmed as yield (stats)."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "protocol_fees_contributed",
+            "docs": [
+              "Lifetime LST routed to the protocol treasury from this vault (the passive-income stream)."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "active_pass_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "deposited_at",
+            "type": "i64"
+          },
+          {
+            "name": "paid_through",
+            "docs": [
+              "Unix timestamp through which access is paid (trial + yield-funded time).",
+              "`i64::MAX` for unmetered dApps. Access is active while `now <= paid_through`."
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "is_cooling_down",
+            "type": "bool"
+          },
+          {
+            "name": "cooldown_start_time",
+            "type": "i64"
+          },
+          {
+            "name": "last_harvest_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
   ]
 }

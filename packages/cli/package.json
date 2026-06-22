@@ -1,7 +1,8 @@
 {
   "name": "@s2s-kit/cli",
   "version": "1.0.0",
-  "description": "The one-command integration for Stake-to-Subscribe infrastructure.",
+  "description": "CLI for S2S-Kit — non-custodial staking-yield routing on Solana.",
+  "license": "SEE LICENSE IN LICENSE",
   "main": "dist/index.js",
   "bin": {
     "s2s": "./dist/index.js"

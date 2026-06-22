@@ -1,5 +1,11 @@
 import React from 'react';
-import { S2SProvider, useSubscription, useS2SVault } from '../../sdk/s2s-react/src';
+import { S2SProvider, useS2S } from '../../sdk/s2s-react/src';
+
+// Demo configuration — point these at your deployed protocol + allow-listed LST.
+const LST_MINT = 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn'; // jitoSOL
+const LST_SYMBOL = 'jitoSOL';
+const DAPP_ID = 'chat-app';
+const DEPOSIT = 100;
 
 const IndustrialCard: React.FC<{ title: string, children: React.ReactNode }> = ({ title, children }) => (
   <div style={{
@@ -17,20 +23,20 @@ const IndustrialCard: React.FC<{ title: string, children: React.ReactNode }> = (
 );
 
 const Dashboard = () => {
-  const { status, hasAccess, message, details } = useSubscription();
-  const { stakeAndSubscribe, isConnecting } = useS2SVault();
+  const { status, depositAndSubscribe, initiateUnsubscribe, withdraw } = useS2S();
+  const hasAccess = status === 'ACTIVE' || status === 'COOLDOWN';
 
   return (
     <div style={{ background: '#0a0a0c', color: '#e0e0e0', minHeight: '100vh', padding: '40px', fontFamily: 'Inter, system-ui' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '60px' }}>
         <div>
           <h1 style={{ fontSize: '32px', fontWeight: 900, letterSpacing: '-1px', margin: 0 }}>S2S <span style={{ color: '#ffaa00' }}>VAULT</span></h1>
-          <p style={{ opacity: 0.5, fontSize: '14px' }}>Sovereign Staking Infrastructure for Seeker</p>
+          <p style={{ opacity: 0.5, fontSize: '14px' }}>LST Subscription Infrastructure on Solana</p>
         </div>
         <div style={{ textAlign: 'right' }}>
-           <div style={{ 
-             padding: '8px 16px', 
-             borderRadius: '20px', 
+           <div style={{
+             padding: '8px 16px',
+             borderRadius: '20px',
              background: hasAccess ? 'rgba(0, 255, 100, 0.1)' : 'rgba(255, 50, 50, 0.1)',
              border: `1px solid ${hasAccess ? '#00ff64' : '#ff3232'}`,
              color: hasAccess ? '#00ff64' : '#ff3232',
@@ -44,14 +50,14 @@ const Dashboard = () => {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
         <section>
-          <IndustrialCard title="Staking Control">
+          <IndustrialCard title="Deposit Control">
             <div style={{ marginBottom: '24px' }}>
-              <p style={{ fontSize: '14px', opacity: 0.7 }}>Stake $SKR to unlock the entire Seeker ecosystem.</p>
-              <div style={{ fontSize: '48px', fontWeight: 900 }}>100.00 <span style={{ fontSize: '24px', opacity: 0.3 }}>SKR</span></div>
+              <p style={{ fontSize: '14px', opacity: 0.7 }}>Deposit {LST_SYMBOL} to unlock access. You keep your principal — only the yield is routed.</p>
+              <div style={{ fontSize: '48px', fontWeight: 900 }}>{DEPOSIT.toFixed(2)} <span style={{ fontSize: '24px', opacity: 0.3 }}>{LST_SYMBOL}</span></div>
             </div>
-            <button 
-              onClick={() => stakeAndSubscribe(100, "GLOBAL")}
-              disabled={isConnecting}
+            <button
+              onClick={() => depositAndSubscribe(LST_MINT, DEPOSIT, DAPP_ID)}
+              disabled={hasAccess}
               style={{
                 width: '100%',
                 padding: '16px',
@@ -60,23 +66,21 @@ const Dashboard = () => {
                 border: 'none',
                 borderRadius: '8px',
                 fontWeight: 900,
-                cursor: 'pointer',
+                cursor: hasAccess ? 'not-allowed' : 'pointer',
+                opacity: hasAccess ? 0.4 : 1,
                 transition: 'transform 0.1s'
               }}
             >
-              INITIALIZE SHARED VAULT
+              DEPOSIT &amp; SUBSCRIBE
             </button>
           </IndustrialCard>
 
-          <IndustrialCard title="Yield Telemetry">
-             <div style={{ display: 'flex', justifyContent: 'space-between', opacity: 0.6, fontSize: '14px' }}>
-               <span>Protocol APY</span>
-               <span>~22.4%</span>
+          <IndustrialCard title="Subscription Lifecycle">
+             <div style={{ display: 'flex', gap: '12px' }}>
+               <button onClick={() => initiateUnsubscribe()} disabled={status !== 'ACTIVE'} style={{ flex: 1, padding: '12px', background: 'transparent', color: '#e0e0e0', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', cursor: 'pointer' }}>Unsubscribe</button>
+               <button onClick={() => withdraw(LST_MINT)} disabled={status !== 'COOLDOWN'} style={{ flex: 1, padding: '12px', background: 'transparent', color: '#ff6600', border: '1px solid rgba(255,102,0,0.4)', borderRadius: '8px', cursor: 'pointer' }}>Withdraw principal</button>
              </div>
-             <div style={{ display: 'flex', justifyContent: 'space-between', opacity: 0.6, fontSize: '14px', marginTop: '8px' }}>
-               <span>Est. Monthly Yield</span>
-               <span>1.86 SKR</span>
-             </div>
+             <p style={{ opacity: 0.5, fontSize: '12px', marginTop: '12px' }}>Yield (the {LST_SYMBOL} appreciation) is harvested by a permissionless crank and split between the protocol and the dApp.</p>
           </IndustrialCard>
         </section>
 
@@ -86,23 +90,23 @@ const Dashboard = () => {
               {hasAccess ? (
                 <div style={{ color: '#e0e0e0', opacity: 1 }}>
                   <div style={{ marginBottom: '16px', padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                    <strong>Seeker Mail Pro</strong> - Active
+                    <strong>Mail Pro</strong> - Active
                   </div>
                   <div style={{ marginBottom: '16px', padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
                     <strong>Aether VPN</strong> - Active
                   </div>
                   <div style={{ padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                    <strong>Guardian Analytics</strong> - Active
+                    <strong>Analytics</strong> - Active
                   </div>
                 </div>
               ) : (
-                "Stake to unlock dApps"
+                `Deposit ${LST_SYMBOL} to unlock dApps`
               )}
             </div>
           </IndustrialCard>
-          
-          {details?.isGracePeriod && (
-            <div style={{ 
+
+          {status === 'COOLDOWN' && (
+            <div style={{
               background: 'linear-gradient(90deg, #ffaa00 0%, #ff6600 100%)',
               padding: '16px',
               borderRadius: '8px',
@@ -110,7 +114,7 @@ const Dashboard = () => {
               fontWeight: 700,
               fontSize: '14px'
             }}>
-              ⚡ INSTANT ACCESS: You are currently in the 72h grace period. Access will remain active while your first reward epoch finalizes.
+              ⏳ COOLDOWN: access remains active until your withdrawal cooldown finishes, then you can reclaim your principal.
             </div>
           )}
         </section>
@@ -120,7 +124,7 @@ const Dashboard = () => {
 };
 
 export const App = () => (
-  <S2SProvider endpoint="http://localhost:3000">
+  <S2SProvider>
     <Dashboard />
   </S2SProvider>
 );

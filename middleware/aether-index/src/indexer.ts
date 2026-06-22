@@ -3,32 +3,36 @@ import * as borsh from 'borsh';
 
 const STAKE_TO_SUBSCRIBE_PROGRAM_ID = new PublicKey("StKToSuBSCriBe11111111111111111111111111111");
 
-// UserVault Account Schema (matching Rust struct)
+// UserVault Account Schema (matching state/vault.rs, LST model)
 class UserVault {
     user: Uint8Array;
-    stakedAmount: bigint;
-    shares: bigint;
-    cumulativeYieldHarvested: bigint;
-    accumulatedYieldPerDapp: bigint;
+    lstMint: Uint8Array;
+    dapp: Uint8Array;
+    depositedLst: bigint;
+    principalValue: bigint;
+    cumulativeYieldSkimmed: bigint;
+    protocolFeesContributed: bigint;
     activePassMint: Uint8Array;
-    stakedAt: bigint;
+    depositedAt: bigint;
+    paidThrough: bigint;
     isCoolingDown: boolean;
     cooldownStartTime: bigint;
-    totalSharesUnstaking: bigint;
     lastHarvestAt: bigint;
     bump: number;
 
     constructor(fields: any) {
         this.user = fields.user;
-        this.stakedAmount = fields.stakedAmount;
-        this.shares = fields.shares;
-        this.cumulativeYieldHarvested = fields.cumulativeYieldHarvested;
-        this.accumulatedYieldPerDapp = fields.accumulatedYieldPerDapp;
+        this.lstMint = fields.lstMint;
+        this.dapp = fields.dapp;
+        this.depositedLst = fields.depositedLst;
+        this.principalValue = fields.principalValue;
+        this.cumulativeYieldSkimmed = fields.cumulativeYieldSkimmed;
+        this.protocolFeesContributed = fields.protocolFeesContributed;
         this.activePassMint = fields.activePassMint;
-        this.stakedAt = fields.stakedAt;
+        this.depositedAt = fields.depositedAt;
+        this.paidThrough = fields.paidThrough;
         this.isCoolingDown = fields.isCoolingDown;
         this.cooldownStartTime = fields.cooldownStartTime;
-        this.totalSharesUnstaking = fields.totalSharesUnstaking;
         this.lastHarvestAt = fields.lastHarvestAt;
         this.bump = fields.bump;
     }
@@ -39,15 +43,17 @@ const UserVaultSchema = new Map([
         kind: 'struct',
         fields: [
             ['user', [32]],
-            ['stakedAmount', 'u64'],
-            ['shares', 'u128'],
-            ['cumulativeYieldHarvested', 'u64'],
-            ['accumulatedYieldPerDapp', 'u128'],
+            ['lstMint', [32]],
+            ['dapp', [32]],
+            ['depositedLst', 'u64'],
+            ['principalValue', 'u64'],
+            ['cumulativeYieldSkimmed', 'u64'],
+            ['protocolFeesContributed', 'u64'],
             ['activePassMint', [32]],
-            ['stakedAt', 'i64'],
+            ['depositedAt', 'i64'],
+            ['paidThrough', 'i64'],
             ['isCoolingDown', 'u8'], // Bool is 1 byte
             ['cooldownStartTime', 'i64'],
-            ['totalSharesUnstaking', 'u128'],
             ['lastHarvestAt', 'i64'],
             ['bump', 'u8'],
         ]
@@ -68,7 +74,7 @@ export class AetherIndex {
         
         // Initial fetch of all vaults
         const accounts = await this.connection.getProgramAccounts(STAKE_TO_SUBSCRIBE_PROGRAM_ID, {
-            filters: [{ dataSize: 184 }] // 8 (disc) + UserVault::INIT_SPACE
+            filters: [{ dataSize: 202 }] // 8 (disc) + UserVault::INIT_SPACE (194)
         });
 
         for (const account of accounts) {
@@ -92,10 +98,16 @@ export class AetherIndex {
             const decoded = borsh.deserialize(UserVaultSchema, UserVault, accountData);
             
             this.vaultStatusCache.set(pubkey.toString(), {
-                stakedAmount: Number(decoded.stakedAmount),
-                shares: decoded.shares.toString(),
-                stakedAt: Number(decoded.stakedAt),
-                isCoolingDown: decoded.isCoolingDown === 1,
+                lstMint: new PublicKey(decoded.lstMint).toString(),
+                dapp: new PublicKey(decoded.dapp).toString(),
+                depositedLst: decoded.depositedLst.toString(),
+                principalValue: decoded.principalValue.toString(),
+                cumulativeYieldSkimmed: decoded.cumulativeYieldSkimmed.toString(),
+                protocolFeesContributed: decoded.protocolFeesContributed.toString(),
+                depositedAt: Number(decoded.depositedAt),
+                paidThrough: Number(decoded.paidThrough),
+                active: Number(decoded.paidThrough) >= Math.floor(Date.now() / 1000),
+                isCoolingDown: (decoded.isCoolingDown as unknown as number) === 1,
                 cooldownStartTime: Number(decoded.cooldownStartTime),
                 lastHarvestAt: Number(decoded.lastHarvestAt)
             });
