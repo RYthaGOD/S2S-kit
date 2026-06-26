@@ -1,3 +1,4 @@
+pub mod admin;
 pub mod initialize_protocol;
 pub mod add_lst;
 pub mod update_lst_rate;
@@ -9,6 +10,7 @@ pub mod verify_access;
 pub mod initiate_unsubscribe;
 pub mod withdraw;
 
+pub use admin::*;
 pub use initialize_protocol::*;
 pub use add_lst::*;
 pub use update_lst_rate::*;

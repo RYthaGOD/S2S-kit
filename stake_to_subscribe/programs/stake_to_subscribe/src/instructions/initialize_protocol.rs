@@ -40,7 +40,7 @@ pub fn handler(
     treasury: Pubkey,
     cooldown_seconds: u64,
 ) -> Result<()> {
-    require!(protocol_fee_bps <= 10_000, ErrorCode::InvalidFee);
+    require!(protocol_fee_bps <= crate::MAX_PROTOCOL_FEE_BPS, ErrorCode::InvalidFee);
 
     let config = &mut ctx.accounts.config;
     config.authority = ctx.accounts.authority.key();

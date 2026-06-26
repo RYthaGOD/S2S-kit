@@ -105,7 +105,7 @@ describe("stake_to_subscribe — LST yield routing", () => {
     assert.equal(vault.depositedLst.toString(), ONE.muln(10).toString());
     assert.equal((await getAccount(conn, userPass, undefined, TOKEN_2022_PROGRAM_ID)).amount.toString(), "1");
     // free trial granted → access active immediately (verify_access does not throw).
-    await program.methods.verifyAccess().accounts({ userVault }).rpc();
+    await program.methods.verifyAccess().accounts({ userVault, dapp }).rpc();
   });
 
   it("appreciates the LST, harvests yield, and routes it (protocol + dApp), principal preserved", async () => {

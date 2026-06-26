@@ -842,6 +842,254 @@
       "args": []
     },
     {
+      "name": "set_authority",
+      "docs": [
+        "Transfer the protocol authority (e.g. to a multisig)."
+      ],
+      "discriminator": [
+        133,
+        250,
+        37,
+        21,
+        110,
+        163,
+        26,
+        121
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "new_authority",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "set_lst_enabled",
+      "docs": [
+        "Enable or disable an allow-listed LST (disabling never traps existing vaults)."
+      ],
+      "discriminator": [
+        154,
+        56,
+        41,
+        38,
+        130,
+        226,
+        207,
+        163
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lst_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lst_config.mint",
+                "account": "LstConfig"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "enabled",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "set_protocol_fee",
+      "docs": [
+        "Set the protocol fee in bps (the fee switch), capped at MAX_PROTOCOL_FEE_BPS."
+      ],
+      "discriminator": [
+        173,
+        239,
+        83,
+        242,
+        136,
+        43,
+        144,
+        217
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "new_fee_bps",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "update_dapp",
+      "docs": [
+        "dApp owner updates its treasury and billing terms."
+      ],
+      "discriminator": [
+        94,
+        7,
+        224,
+        70,
+        65,
+        81,
+        45,
+        214
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "dapp",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  97,
+                  112,
+                  112
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "dapp.dapp_id",
+                "account": "DappRegistry"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "treasury",
+          "type": "pubkey"
+        },
+        {
+          "name": "min_stake_value",
+          "type": "u64"
+        },
+        {
+          "name": "price_per_period",
+          "type": "u64"
+        },
+        {
+          "name": "period_seconds",
+          "type": "i64"
+        },
+        {
+          "name": "trial_seconds",
+          "type": "i64"
+        }
+      ]
+    },
+    {
       "name": "update_lst_rate",
       "docs": [
         "Authority push of a manual LST's rate (test/fallback LSTs only)."
@@ -949,6 +1197,30 @@
                 "kind": "account",
                 "path": "user_vault.user",
                 "account": "UserVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dapp",
+          "docs": [
+            "The dApp being accessed. Must match the dApp this vault is subscribed to."
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  97,
+                  112,
+                  112
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "dapp.dapp_id",
+                "account": "DappRegistry"
               }
             ]
           }

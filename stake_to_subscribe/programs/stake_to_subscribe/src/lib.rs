@@ -16,6 +16,10 @@ pub const RATE_PRECISION: u128 = 1_000_000_000_000; // 1e12
 /// bSOL, JupSOL, INF and most SPL-stake-pool LSTs).
 pub const SPL_STAKE_POOL_PROGRAM: Pubkey = pubkey!("SPoo1Ku8WFXoNDMHPsrGSTSG1Y47rzgn41SLUNakuHy");
 
+/// Hard cap on the protocol fee the authority can ever set (10%). A sanity bound
+/// so even a compromised authority cannot set a confiscatory fee.
+pub const MAX_PROTOCOL_FEE_BPS: u16 = 1_000;
+
 #[program]
 pub mod stake_to_subscribe {
     use super::*;
@@ -88,6 +92,35 @@ pub mod stake_to_subscribe {
     /// Trustless access check (CPI-able): errors unless the vault is paid through now.
     pub fn verify_access(ctx: Context<VerifyAccess>) -> Result<()> {
         instructions::verify_access::handler(ctx)
+    }
+
+    // --- Governance / admin (all gated; no account layout changes) ---
+
+    /// Transfer the protocol authority (e.g. to a multisig).
+    pub fn set_authority(ctx: Context<SetAuthority>, new_authority: Pubkey) -> Result<()> {
+        instructions::admin::set_authority(ctx, new_authority)
+    }
+
+    /// Set the protocol fee in bps (the fee switch), capped at MAX_PROTOCOL_FEE_BPS.
+    pub fn set_protocol_fee(ctx: Context<SetProtocolFee>, new_fee_bps: u16) -> Result<()> {
+        instructions::admin::set_protocol_fee(ctx, new_fee_bps)
+    }
+
+    /// Enable or disable an allow-listed LST (disabling never traps existing vaults).
+    pub fn set_lst_enabled(ctx: Context<SetLstEnabled>, enabled: bool) -> Result<()> {
+        instructions::admin::set_lst_enabled(ctx, enabled)
+    }
+
+    /// dApp owner updates its treasury and billing terms.
+    pub fn update_dapp(
+        ctx: Context<UpdateDapp>,
+        treasury: Pubkey,
+        min_stake_value: u64,
+        price_per_period: u64,
+        period_seconds: i64,
+        trial_seconds: i64,
+    ) -> Result<()> {
+        instructions::admin::update_dapp(ctx, treasury, min_stake_value, price_per_period, period_seconds, trial_seconds)
     }
 
     /// Begin the withdrawal cooldown for the user's principal.

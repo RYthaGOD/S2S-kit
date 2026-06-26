@@ -104,17 +104,22 @@ pub fn handler(ctx: Context<Withdraw>) -> Result<()> {
     }
 
     // 3. Burn the Active Pass to finalize the unsubscription.
-    burn(
-        CpiContext::new(
-            ctx.accounts.pass_token_program.to_account_info(),
-            Burn {
-                mint: ctx.accounts.pass_mint.to_account_info(),
-                from: ctx.accounts.user_pass_account.to_account_info(),
-                authority: ctx.accounts.user.to_account_info(),
-            },
-        ),
-        1,
-    )?;
+    // Guard: the pass is NonTransferable but NOT non-burnable. If the user burned it
+    // externally the account balance may already be 0; skipping avoids a permanent lock
+    // of their principal.
+    if ctx.accounts.user_pass_account.amount >= 1 {
+        burn(
+            CpiContext::new(
+                ctx.accounts.pass_token_program.to_account_info(),
+                Burn {
+                    mint: ctx.accounts.pass_mint.to_account_info(),
+                    from: ctx.accounts.user_pass_account.to_account_info(),
+                    authority: ctx.accounts.user.to_account_info(),
+                },
+            ),
+            1,
+        )?;
+    }
 
     Ok(())
 }

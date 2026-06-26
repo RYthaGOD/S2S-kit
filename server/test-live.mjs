@@ -37,7 +37,7 @@ const dappId = Array.from(Buffer.from(lc.dappIdHex, "hex"));
     tokenProgram: TOKEN_PROGRAM_ID, passTokenProgram: TOKEN_2022_PROGRAM_ID,
     associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID, systemProgram: SystemProgram.programId,
   }).rpc();
-  await program.methods.verifyAccess().accounts({ userVault }).rpc();
+  await program.methods.verifyAccess().accounts({ userVault, dapp }).rpc();
   console.log("✓ deposited 6 demoSOL + subscribed (trial active, pass minted)");
 
   // 3. keeper harvests (bump rate + skim)

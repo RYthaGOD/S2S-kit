@@ -88,7 +88,7 @@ const ex = (sig) => `https://explorer.solana.com/tx/${sig}?cluster=devnet`;
     console.log("✓ deposit_and_subscribe", ex(sig));
   }
   console.log("  pass balance:", (await getAccount(conn, userPass, undefined, TOKEN_2022_PROGRAM_ID)).amount.toString());
-  await program.methods.verifyAccess().accounts({ userVault }).rpc();
+  await program.methods.verifyAccess().accounts({ userVault, dapp }).rpc();
   console.log("✓ verify_access OK (trial active)");
 
   // 5. simulate appreciation (rate 1.0 -> 1.1) then harvest

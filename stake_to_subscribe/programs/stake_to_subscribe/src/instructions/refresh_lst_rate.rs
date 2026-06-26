@@ -48,6 +48,9 @@ pub fn handler(ctx: Context<RefreshLstRate>) -> Result<()> {
 
     let data = ctx.accounts.stake_pool.try_borrow_data()?;
     require!(data.len() >= OFF_POOL_TOKEN_SUPPLY + 8, ErrorCode::InvalidRateSource);
+    // account_type byte 0: 1 = StakePool (guards against other SPL Stake Pool–owned accounts
+    // like ValidatorList being registered as rate_source by mistake).
+    require!(data[0] == 1, ErrorCode::InvalidRateSource);
 
     let total_lamports = u64::from_le_bytes(
         data[OFF_TOTAL_LAMPORTS..OFF_TOTAL_LAMPORTS + 8].try_into().unwrap(),
